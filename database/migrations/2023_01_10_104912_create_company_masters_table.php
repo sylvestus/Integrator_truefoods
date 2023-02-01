@@ -18,14 +18,14 @@ class CreateCompanyMastersTable extends Migration
             $table->string('company_name');
             $table->string('company_email')->unique();
             $table->string('account_number');
-            $table->string('consumerKey');
-            $table->string('tokenId');
-            $table->string('consumerSecret');
-            $table->string('tokenSecret');
-            $table->string('staging_consumerKey');
-            $table->string('staging_tokenId');
-            $table->string('staging_consumerSecret');
-            $table->string('staging_tokenSecret');
+            $table->string('consumerKey')->nullable();
+            $table->string('tokenId')->nullable();
+            $table->string('consumerSecret')->nullable();
+            $table->string('tokenSecret')->nullable();
+            $table->string('staging_consumerKey')->nullable();
+            $table->string('staging_tokenId')->nullable();
+            $table->string('staging_consumerSecret')->nullable();
+            $table->string('staging_tokenSecret')->nullable();
             $table->timestamps();
         });
     }
