@@ -27,11 +27,11 @@ class SalesOrderController extends Controller
           $order_number = $request->order_number;
           $environment = $request->environment;
           $company_data = CompanyMaster::where('id', $company_id)->first();
-          $url = "https://" . $company_data->account_number . ".suitetalk.api.netsuite.com/services/rest/record/v1/salesOrder?q=custbody_ordernum+CONTAIN+".$order_number;
+          $url = "https://" . $company_data->account_number . "-SB1.suitetalk.api.netsuite.com/services/rest/record/v1/salesOrder?q=custbody_ordernum+CONTAIN+".$order_number;
           $method = "GET";
           $data = "";
           $data = json_decode($data);
-          $response = $this->netsuite_connector->callRestApi($url,$method,$data,$company_data,'production');
+          $response = $this->netsuite_connector->callRestApi($url,$method,$data,$company_data,'sandbox');
           if($response['statusCode'] != 200){
               return $response;
           }else{
@@ -53,13 +53,13 @@ class SalesOrderController extends Controller
            $environment = $request->environment;
 
            $company_data = CompanyMaster::where('id', $company_id)->first();
-           $url = "https://" . $company_data->account_number . ".suitetalk.api.netsuite.com/services/rest/record/v1/salesOrder";
+           $url = "https://" . $company_data->account_number . "-SB1.suitetalk.api.netsuite.com/services/rest/record/v1/salesOrder";
            $method = "POST";
            $received_data = $request->orders;
            $formatted_order = $this->generate_order_for_netsuite($received_data);
            $data = json_decode($formatted_order);
 
-           $response = $this->netsuite_connector->callRestApi($url,$method,$data,$company_data,'production');
+           $response = $this->netsuite_connector->callRestApi($url,$method,$data,$company_data,'sandbox');
            if($response['statusCode'] != 200){
                return $response;
            }else{

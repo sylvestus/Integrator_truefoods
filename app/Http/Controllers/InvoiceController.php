@@ -36,13 +36,13 @@ class InvoiceController extends Controller
             $invoice_number = $request->invoice_number;
 
             $company_data = CompanyMaster::where('id', $company_id)->first();
-            $url = "https://" . $company_data->account_number . ".restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=customscript_invoice_search_custom_scrip&deploy=customdeploy_invoices_search_script_api&invoiceNumber=".$invoice_number."&startDate=".$start_date."&endDate=".$end_date."&customerId=".$customer_id."&repId=".$rep_id;
+            $url = "https://" . $company_data->account_number . "-SB1.restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=customscript_invoice_search_custom_scrip&deploy=customdeploy_invoices_search_script_api&invoiceNumber=".$invoice_number."&startDate=".$start_date."&endDate=".$end_date."&customerId=".$customer_id."&repId=".$rep_id;
             $method = "GET";
             $data = "";
             $data = json_decode($data);
 
 
-            $send_request = $this->netsuite_connector->callRestApi($url, $method, $data, $company_data, 'production');
+            $send_request = $this->netsuite_connector->callRestApi($url, $method, $data, $company_data, 'sandbox');
             if ($send_request['statusCode'] != 200) {
                 return $send_request;
             } else {
@@ -66,11 +66,11 @@ class InvoiceController extends Controller
             $order_number = $request->order_number;
 
             $company_data = CompanyMaster::where('id', $company_id)->first();
-            $url = "https://" . $company_data->account_number . ".suitetalk.api.netsuite.com/services/rest/record/v1/salesOrder?q=custbody_ordernum+CONTAIN+".$order_number;
+            $url = "https://" . $company_data->account_number . "-SB1.suitetalk.api.netsuite.com/services/rest/record/v1/salesOrder?q=custbody_ordernum+CONTAIN+".$order_number;
             $method = "GET";
             $data = "";
             $data = json_decode($data);
-            $response = $this->netsuite_connector->callRestApi($url, $method, $data, $company_data, 'production');
+            $response = $this->netsuite_connector->callRestApi($url, $method, $data, $company_data, 'sandbox');
             if ($response['statusCode'] != 200) {
                 return $response;
             } else {

@@ -21,7 +21,7 @@ Route::post('register-user', [PassportAuthController::class, 'register']);
 Route::post('login', [PassportAuthController::class, 'login']);
 Route::middleware('auth:api')->group(function () {
     Route::post('sales_order', PostController::class);
-    Route::get('company-master/get-all',[\App\Http\Controllers\CompanyMasterController::class, 'getAllCompany'])->name('company_master.get.all');
+    Route::get('company-master/get-allx',[\App\Http\Controllers\CompanyMasterController::class, 'getAllCompany'])->name('company_master.get.allX');
 
     //stock items
     Route::post('get_stock',[\App\Http\Controllers\ItemsController::class, 'getInventoryItems']);

@@ -30,8 +30,9 @@ class NetsuiteConnectorController extends Controller
             $company_master = $company_data;
             $account = $company_master->account_number;
 
-            if($environment == 'staging'){
+            if($environment == 'sandbox'){
                 $consumerKey = $company_master->staging_consumerKey;
+                //dd($company_master);
                 $tokenId = $company_master->staging_tokenId;
                 $consumerSecret = $company_master->staging_consumerSecret;
                 $tokenSecret = $company_master->staging_tokenSecret;

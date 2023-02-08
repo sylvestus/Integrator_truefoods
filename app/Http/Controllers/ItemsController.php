@@ -22,7 +22,7 @@ class ItemsController extends Controller
             $company_id = $request->company_id;
 
             $company_data = CompanyMaster::where('id', $company_id)->first();
-            $url = "https://" . $company_data->account_number . '.suitetalk.api.netsuite.com/services/rest/query/v1/suiteql';
+            $url = "https://" . $company_data->account_number . '-SB1.suitetalk.api.netsuite.com/services/rest/query/v1/suiteql';
             $method = "POST";
 
 
@@ -47,7 +47,7 @@ class ItemsController extends Controller
             }
             $data = json_encode($query);
 
-            $send_request = $this->netsuite_connector->callRestApi($url, $method, $data, $company_data, 'production');
+            $send_request = $this->netsuite_connector->callRestApi($url, $method, $data, $company_data, 'sandbox');
             if($send_request['statusCode'] != 200){
                 return $send_request;
             }else{
