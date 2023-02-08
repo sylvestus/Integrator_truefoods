@@ -21,6 +21,7 @@ class NetsuiteConnectorController extends Controller
     public function callRestApi($url,$method,$data,$company_data,$environment){
         try{
 
+
             $oauth_nonce = md5(mt_rand());
             $oauth_timestamp = time();
             $oauth_signature_method = 'HMAC-SHA256';
@@ -28,15 +29,18 @@ class NetsuiteConnectorController extends Controller
 
 
             $company_master = $company_data;
-            $account = $company_master->account_number;
+            $account_number = $company_master->account_number;
+
 
             if($environment == 'sandbox'){
+                $account = $account_number.'_SB1';
                 $consumerKey = $company_master->staging_consumerKey;
-                //dd($company_master);
                 $tokenId = $company_master->staging_tokenId;
                 $consumerSecret = $company_master->staging_consumerSecret;
                 $tokenSecret = $company_master->staging_tokenSecret;
+                //dd($tokenSecret);
             }else{
+                $account = $account_number;
                 $consumerKey = $company_master->consumerKey;
                 $tokenId = $company_master->tokenId;
                 $consumerSecret = $company_master->consumerSecret;
@@ -54,9 +58,12 @@ class NetsuiteConnectorController extends Controller
                 $oauth_version,
                 $oauth_signature_method,null);
 
+
+
             $key = rawurlencode($consumerSecret) .'&'. rawurlencode($tokenSecret);
 
             $signature = base64_encode(hash_hmac('sha256', $baseString, $key, true));
+            //dd($signature);
 
             // GENERATE HEADER TO PASS IN CURL
             $header = 'Authorization: OAuth '
@@ -68,6 +75,9 @@ class NetsuiteConnectorController extends Controller
                 .'oauth_signature_method="' .rawurlencode($oauth_signature_method) .'", '
                 .'oauth_version="' .rawurlencode($oauth_version) .'", '
                 .'oauth_signature="' .rawurlencode($signature) .'"';
+
+           // $header = 'Authorization: OAuth realm="7569482_SB1",oauth_consumer_key="15f24cfbd171c23df88897a9592d8a1938836f0bd24576e6a23e80b275bf8923",oauth_token="51bd5707e5c8e74efe810bcc362ec575e72a597bcdbd5681ea4a32d7ad527d15",oauth_signature_method="HMAC-SHA256",oauth_timestamp="1675842972",oauth_nonce="L1Z5cNUDg0c",oauth_version="1.0",oauth_signature="RpC%2F5asl3OyLbJQdaDXLsLNz0UbztpmYkphZdjOZoYw%3D"';
+
 
             return  $this->callCurl($header,$url,$data,$method);
         }catch (\Exception $ex){
@@ -99,6 +109,7 @@ class NetsuiteConnectorController extends Controller
                 ),
             ));
             $response = curl_exec($curl);
+            //dd($response);
 
             $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
             curl_close($curl);

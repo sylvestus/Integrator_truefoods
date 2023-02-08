@@ -20,9 +20,14 @@ class ItemsController extends Controller
     {
         try {
             $company_id = $request->company_id;
-
+            $environment = $request->environment;
             $company_data = CompanyMaster::where('id', $company_id)->first();
-            $url = "https://" . $company_data->account_number . '-SB1.suitetalk.api.netsuite.com/services/rest/query/v1/suiteql';
+            if($environment == 'sandbox'){
+                $account_number = $company_data->account_number.'-sb1';
+            }else{
+                $account_number = $company_data->account_number;
+            }
+            $url = "https://".$account_number .".suitetalk.api.netsuite.com/services/rest/query/v1/suiteql";
             $method = "POST";
 
 
@@ -47,7 +52,7 @@ class ItemsController extends Controller
             }
             $data = json_encode($query);
 
-            $send_request = $this->netsuite_connector->callRestApi($url, $method, $data, $company_data, 'sandbox');
+            $send_request = $this->netsuite_connector->callRestApi($url, $method, $data, $company_data, $environment);
             if($send_request['statusCode'] != 200){
                 return $send_request;
             }else{

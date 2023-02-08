@@ -36,13 +36,20 @@ class InvoiceController extends Controller
             $invoice_number = $request->invoice_number;
 
             $company_data = CompanyMaster::where('id', $company_id)->first();
-            $url = "https://" . $company_data->account_number . "-SB1.restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=customscript_invoice_search_custom_scrip&deploy=customdeploy_invoices_search_script_api&invoiceNumber=".$invoice_number."&startDate=".$start_date."&endDate=".$end_date."&customerId=".$customer_id."&repId=".$rep_id;
+
+            if($environment == 'sandbox'){
+                $account_number = $company_data->account_number.'-sb1';
+            }else{
+                $account_number = $company_data->account_number;
+            }
+            $url = "https://".$account_number .".restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=customscript_invoice_search_custom_scrip&deploy=customdeploy_invoices_search_script_api&invoiceNumber=".$invoice_number."&startDate=".$start_date."&endDate=".$end_date."&customerId=".$customer_id."&repId=".$rep_id;
+//            dd($url);
             $method = "GET";
             $data = "";
             $data = json_decode($data);
 
 
-            $send_request = $this->netsuite_connector->callRestApi($url, $method, $data, $company_data, 'sandbox');
+            $send_request = $this->netsuite_connector->callRestApi($url, $method, $data, $company_data, $environment);
             if ($send_request['statusCode'] != 200) {
                 return $send_request;
             } else {
@@ -64,9 +71,14 @@ class InvoiceController extends Controller
         try {
             $company_id = $request->company_id;
             $order_number = $request->order_number;
-
+            $environment = $request->environment;
             $company_data = CompanyMaster::where('id', $company_id)->first();
-            $url = "https://" . $company_data->account_number . "-SB1.suitetalk.api.netsuite.com/services/rest/record/v1/salesOrder?q=custbody_ordernum+CONTAIN+".$order_number;
+            if($environment == 'sandbox'){
+                $account_number = $company_data->account_number.'-sb1';
+            }else{
+                $account_number = $company_data->account_number;
+            }
+            $url = "https://".$account_number .".suitetalk.api.netsuite.com/services/rest/record/v1/salesOrder?q=custbody_ordernum+CONTAIN+".$order_number;
             $method = "GET";
             $data = "";
             $data = json_decode($data);

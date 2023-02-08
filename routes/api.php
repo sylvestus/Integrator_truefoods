@@ -28,7 +28,7 @@ Route::middleware('auth:api')->group(function () {
 
     //Order
     Route::post('search/salesOrder',[\App\Http\Controllers\SalesOrderController::class, 'searchSalesOrder']);
-    Route::post('post/salesOrder',[\App\Http\Controllers\SalesOrderController::class, 'postSalesOrder']);
+    Route::post('post/salesOrders',[\App\Http\Controllers\SalesOrderController::class, 'postSalesOrder']);
 
     //invoices
     Route::post('search/invoices',[\App\Http\Controllers\SalesOrderController::class, 'searchInvoices']);

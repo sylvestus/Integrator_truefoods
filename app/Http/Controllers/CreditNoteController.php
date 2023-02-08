@@ -35,14 +35,19 @@ class CreditNoteController extends Controller
             $credit_note_number = $request->credit_note_number;
 
             $company_data = CompanyMaster::where('id', $company_id)->first();
-            $url = "https://" . $company_data->account_number . "-SB1.restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=customscript_credit_note_search_api&deploy=customdeploy_credit_note_search_api&invoiceNumber=".$credit_note_number."&startDate=".$start_date."&endDate=".$end_date."&customerId=".$customer_id."&repId=".$rep_id;
+            if($environment == 'sandbox'){
+                $account_number = $company_data->account_number.'-sb1';
+            }else{
+                $account_number = $company_data->account_number;
+            }
+            $url = "https://".$account_number.".restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=customscript_credit_note_search_api&deploy=customdeploy_credit_note_search_api&invoiceNumber=".$credit_note_number."&startDate=".$start_date."&endDate=".$end_date."&customerId=".$customer_id."&repId=".$rep_id;
             $method = "GET";
             $data = "";
             $data = json_decode($data);
 
 
 
-            $send_request = $this->netsuite_connector->callRestApi($url, $method, $data, $company_data, 'sandbox');
+            $send_request = $this->netsuite_connector->callRestApi($url, $method, $data, $company_data, $environment);
             if ($send_request['statusCode'] != 200) {
                 return $send_request;
             } else {
@@ -66,11 +71,16 @@ class CreditNoteController extends Controller
             $order_number = $request->order_number;
             $environment = $request->environment;
             $company_data = CompanyMaster::where('id', $company_id)->first();
-            $url = "https://" . $company_data->account_number . "_SB.suitetalk.api.netsuite.com/services/rest/record/v1/salesOrder?q=custbody_ordernum+CONTAIN+" . $order_number;
+            if($environment == 'sandbox'){
+                $account_number = $company_data->account_number.'-sb1';
+            }else{
+                $account_number = $company_data->account_number;
+            }
+            $url = "https://".$account_number.".suitetalk.api.netsuite.com/services/rest/record/v1/salesOrder?q=custbody_ordernum+CONTAIN+" . $order_number;
             $method = "GET";
             $data = "";
             $data = json_decode($data);
-            $response = $this->netsuite_connector->callRestApi($url, $method, $data, $company_data, 'production');
+            $response = $this->netsuite_connector->callRestApi($url, $method, $data, $company_data, $environment);
             if ($response['statusCode'] != 200) {
                 return $response;
             } else {
