@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
+Auth::routes();
 Route::get('/', function () {
     return view('welcome');
 });
@@ -25,6 +25,6 @@ Route::get('redirected', function (){
     return response()->json(['statusCode'=>401,'message'=>'Kindly provide valid token to proceed']);
 })->name('redirect');
 
-Auth::routes();
+
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

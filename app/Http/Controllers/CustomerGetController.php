@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CompanyMaster;
 use Illuminate\Http\Request;
 
-class InvoiceController extends Controller
+class CustomerGetController extends Controller
 {
 
 
@@ -23,32 +23,31 @@ class InvoiceController extends Controller
         $this->netsuite_connector = $netsuite_connector;
     }
 
-
-    public function getInvoices(Request $request)
+    public function getCustomerClass(Request $request)
     {
         try {
             $company_id = $request->company_id;
             $environment = $request->environment;
-            $rep_id  = $request->rep_id;
+            /*$rep_id  = $request->rep_id;
             $customer_id  = $request->customer_id;
             $start_date  = $request->start_date;
             $end_date = $request->end_date;
-            $invoice_number = $request->invoice_number;
-
+            $invoice_number = $request->invoice_number;*/
 
             $company_data = CompanyMaster::where('id', $company_id)->first();
-           
+
 
             if($environment == 'sandbox'){
                 $account_number = $company_data->account_number.'-sb1';
             }else{
                 $account_number = $company_data->account_number;
             }
-            $url = "https://".$account_number .".restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=customscript_invoice_search_custom_scrip&deploy=customdeploy_invoices_search_script_api&invoiceNumber=".$invoice_number."&startDate=".$start_date."&endDate=".$end_date."&customerId=".$customer_id."&repId=".$rep_id;
-//            dd($url);
+            $url = "https://".$account_number.".restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=customscript_get_customer_class&deploy=customdeploy_get_customer_class";
+            //$url = "https://".$account_number.".restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=customscript_get_customer_class_updated&deploy=customdeploy_get_customer_cl";
             $method = "GET";
             $data = "";
             $data = json_decode($data);
+
 
 
             $send_request = $this->netsuite_connector->callRestApi($url, $method, $data, $company_data, $environment);
@@ -59,47 +58,52 @@ class InvoiceController extends Controller
                 return ['statusCode' => 200, 'response' => 'Success', 'message' => $data];
             }
 
-
-//call function
         } catch (\Exception $ex) {
             return response()->json(['statusCode' => 300, 'response' => 'Something went wrong',
                 'message' => 'Error: ' . $ex->getMessage() . ' File: ' . $ex->getFile() . ' Line: ' . $ex->getLine()]);
         }
     }
-
-
-    public function searchInvoices(Request $request)
+    public function getCustomers(Request $request)
     {
         try {
             $company_id = $request->company_id;
-            $order_number = $request->order_number;
             $environment = $request->environment;
+            /*$rep_id  = $request->rep_id;
+            $customer_id  = $request->customer_id;
+            $start_date  = $request->start_date;
+            $end_date = $request->end_date;
+            $invoice_number = $request->invoice_number;*/
+
             $company_data = CompanyMaster::where('id', $company_id)->first();
+
+
             if($environment == 'sandbox'){
                 $account_number = $company_data->account_number.'-sb1';
             }else{
                 $account_number = $company_data->account_number;
             }
-            $url = "https://".$account_number .".suitetalk.api.netsuite.com/services/rest/record/v1/salesOrder?q=custbody_ordernum+CONTAIN+".$order_number;
+            $url = "https://".$account_number.".restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=customscript_get_customers&deploy=customdeploy_get_customers";
             $method = "GET";
             $data = "";
             $data = json_decode($data);
-            $response = $this->netsuite_connector->callRestApi($url, $method, $data, $company_data, 'sandbox');
-            if ($response['statusCode'] != 200) {
-                return $response;
+
+
+
+            $send_request = $this->netsuite_connector->callRestApi($url, $method, $data, $company_data, $environment);
+            if ($send_request['statusCode'] != 200) {
+                return $send_request;
             } else {
-                $data = $response['message'];
+                $data = $send_request['message'];
                 return ['statusCode' => 200, 'response' => 'Success', 'message' => $data];
             }
 
-
-            //call function
         } catch (\Exception $ex) {
             return response()->json(['statusCode' => 300, 'response' => 'Something went wrong',
                 'message' => 'Error: ' . $ex->getMessage() . ' File: ' . $ex->getFile() . ' Line: ' . $ex->getLine()]);
         }
-
-
     }
+
+
+
 
 }

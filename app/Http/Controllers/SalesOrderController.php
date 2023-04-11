@@ -60,13 +60,13 @@ class SalesOrderController extends Controller
   }
   public function postSalesOrder(Request $request){
        try{
-           //return 'jeremy';
+          // return $request->all();
            $company_id = $request->company_id;
            $environment = $request->environment;
-
+            //dd($company_id);
 
            $company_data = CompanyMaster::where('id', $company_id)->first();
-
+           // dd($company_id);
            if($environment == 'sandbox'){
                $account_number = $company_data->account_number.'-sb1';
            }else{
@@ -91,6 +91,7 @@ class SalesOrderController extends Controller
                        $data = json_encode($formatted_order['message']);
                        // return ($data);
                        $response = $this->netsuite_connector->callRestApi($url,$method,$data,$company_data,$environment);
+                       dd('jere');
                        if($response['statusCode'] != 200){
                            $not_created[$key]['order_number']=$order['order_number'];
                            $not_created[$key]['message']= $response['message'];

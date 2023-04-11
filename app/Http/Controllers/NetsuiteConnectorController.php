@@ -31,7 +31,7 @@ class NetsuiteConnectorController extends Controller
             $company_master = $company_data;
             $account_number = $company_master->account_number;
 
-
+           // dd($company_master);
             if($environment == 'sandbox'){
                 $account = $account_number.'_SB1';
                 $consumerKey = $company_master->staging_consumerKey;
@@ -109,13 +109,14 @@ class NetsuiteConnectorController extends Controller
                 ),
             ));
             $response = curl_exec($curl);
-            //dd($response);
 
+            dd($response);
             $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
             curl_close($curl);
 
+
             if($httpcode !=204 && $httpcode!=200 ){
-                return (['statusCode'=>$httpcode,'response'=>'Something Went Wrong','message'=>json_decode($response)]);
+                return (['statusCode'=>$httpcode,'response'=>'Something Went Wrong','message'=>($response)]);
             }else{
                 return (array("statusCode"=>200,"response"=>'Success','message'=>json_decode($response)));
 

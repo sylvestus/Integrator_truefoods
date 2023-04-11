@@ -46,6 +46,7 @@ class ItemsController extends Controller
 
             }
             else{
+               // dd('else');
                 $query = array(
                     "q" => "SELECT item.fullname as item_name, item.id as item_code, ivl.location as warehosuse_code, sum(ivl.quantityavailable) as stock_balance, location.fullname as warehouse_name FROM inventoryitemlocations ivl JOIN item ON item.id = ivl.item JOIN location on location.id = ivl.location  group by item.fullname,item.id,location.fullname,ivl.location  ORDER BY item.id, ivl.location asc"
                 );
@@ -53,6 +54,7 @@ class ItemsController extends Controller
             $data = json_encode($query);
 
             $send_request = $this->netsuite_connector->callRestApi($url, $method, $data, $company_data, $environment);
+            //dd($send_request);
             if($send_request['statusCode'] != 200){
                 return $send_request;
             }else{

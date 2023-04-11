@@ -5,28 +5,36 @@ namespace App\Http\Controllers;
 use App\Models\CompanyMaster;
 use App\Models\User;
 use Illuminate\Http\Request;
+use PHPUnit\Exception;
 
 class PassportAuthController extends Controller
 {
     public function register(Request $request)
     {
-        $this->validate($request, [
-            'company_id' => 'required',
-            'name' => 'required|min:4',
-            'email' => 'required|email',
-            'password' => 'required|min:8',
-        ]);
+      try{
+          $this->validate($request, [
+              'company_id' => 'required',
+              'name' => 'required|min:4',
+              'email' => 'required|email',
+              'password' => 'required|min:8',
+          ]);
 
-        $user = User::create([
-            'company_id'=>$request->company_id,
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => bcrypt($request->password)
-        ]);
 
-        $token = $user->createToken('LaravelAuthApp')->accessToken;
+          $user = User::create([
+              'company_id'=>$request->company_id,
+              'name' => $request->name,
+              'email' => $request->email,
+              'password' => bcrypt($request->password)
+          ]);
 
-        return response()->json(['token' => $token], 200);
+
+          $token = $user->createToken('LaravelAuthApp')->accessToken;
+
+          return response()->json(['token' => $token], 200);
+      }catch (Exception $ex){
+          return response()->json(['error' => $ex->getMessage()], 400);
+      }
+
     }
 
     /**

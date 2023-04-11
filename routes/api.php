@@ -37,4 +37,32 @@ Route::middleware('auth:api')->group(function () {
     //credit notes
     Route::post('search/credit-note',[\App\Http\Controllers\CreditNoteController::class, 'searchCreditNotes']);
     Route::post('get/credit-note',[\App\Http\Controllers\CreditNoteController::class, 'getCreditNotes']);
+
+    //subsidiary info
+    Route::post('get/subsidiary',[\App\Http\Controllers\SubsidiaryController::class, 'getSubsidiaryData']);
+    //currency data
+    Route::post('get/currency',[\App\Http\Controllers\CurrencyController::class, 'getCurrencies']);
+    //location  data
+    Route::post('get/location',[\App\Http\Controllers\LocationController::class, 'getLocation']);
+    //employee  data
+    Route::post('get/employee',[\App\Http\Controllers\EmployeeController::class, 'getEmployee']);
+    //category  data
+    Route::post('get/category',[\App\Http\Controllers\CategoriesGetController::class, 'getCategory']);
+    //item  data
+    Route::post('get/items',[\App\Http\Controllers\ItemGetController::class, 'getItem']);
+    //tax code  data
+    Route::post('get/taxCode',[\App\Http\Controllers\TaxCodeController::class, 'getTaxCode']);
+    //UOM  data
+    Route::post('get/uom',[\App\Http\Controllers\UomGetController::class, 'getUomData']);
+    //UOM  Types
+    Route::post('get/uom_type',[\App\Http\Controllers\UomTypesGetController::class, 'getUomTypes']);
+    //Location Qty
+    Route::post('get/location_qty',[\App\Http\Controllers\LocationQtyController::class, 'getLocationQty']);
+    //Customers  Data
+    Route::post('get/customers',[\App\Http\Controllers\CustomerGetController::class, 'getCustomers']);
+    Route::post('get/customer_class',[\App\Http\Controllers\CustomerGetController::class, 'getCustomerClass']);
+    //get accounts data
+    Route::post('get/accounts',[\App\Http\Controllers\AccountsController::class, 'getAccounts']);
+    //get billers data
+    Route::post('get/billers',[\App\Http\Controllers\BillersGetController::class, 'getBillers']);
 });
