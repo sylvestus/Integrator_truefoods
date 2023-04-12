@@ -40,7 +40,7 @@ class CreditNoteController extends Controller
             }else{
                 $account_number = $company_data->account_number;
             }
-            $url = "https://".$account_number.".restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=customscript_credit_note_search_api&deploy=customdeploy_credit_note_search_api&invoiceNumber=".$credit_note_number."&startDate=".$start_date."&endDate=".$end_date."&customerId=".$customer_id."&repId=".$rep_id;
+            $url = "https://".$account_number.".restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=&deploy=customdeploy_credit_note_search_api&invoiceNumber=".$credit_note_number."&startDate=".$start_date."&endDate=".$end_date."&customerId=".$customer_id."&repId=".$rep_id;
             $method = "GET";
             $data = "";
             $data = json_decode($data);
