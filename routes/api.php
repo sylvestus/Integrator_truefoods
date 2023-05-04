@@ -29,10 +29,18 @@ Route::middleware('auth:api')->group(function () {
     //Order
     Route::post('search/salesOrder',[\App\Http\Controllers\SalesOrderController::class, 'searchSalesOrder']);
     Route::post('post/salesOrders',[\App\Http\Controllers\SalesOrderController::class, 'postSalesOrder']);
+    Route::post('post/transform_sales_order',[\App\Http\Controllers\SalesOrderController::class, 'transformSalesOrder']);
 
     //invoices
     Route::post('search/invoices',[\App\Http\Controllers\SalesOrderController::class, 'searchInvoices']);
     Route::post('get/invoices',[\App\Http\Controllers\InvoiceController::class, 'getInvoices']);
+    Route::post('post/invoices',[\App\Http\Controllers\InvoiceController::class, 'postInvoices']);
+    Route::post('post/update_invoice_status',[\App\Http\Controllers\InvoiceController::class, 'updateInvoicePaymentStatus']);
+    Route::post('post/update_sale_status',[\App\Http\Controllers\InvoiceController::class, 'updateAllSaleStatus']);
+
+    //Cash Sales
+    Route::post('post/cash_sale',[\App\Http\Controllers\CashSaleController::class, 'postCashSale']);
+
 
     //credit notes
     Route::post('search/credit-note',[\App\Http\Controllers\CreditNoteController::class, 'searchCreditNotes']);
@@ -61,8 +69,21 @@ Route::middleware('auth:api')->group(function () {
     //Customers  Data
     Route::post('get/customers',[\App\Http\Controllers\CustomerGetController::class, 'getCustomers']);
     Route::post('get/customer_class',[\App\Http\Controllers\CustomerGetController::class, 'getCustomerClass']);
+    //post customer data
+    Route::post('post/customer',[\App\Http\Controllers\CustomerController::class, 'postCustomers']);
     //get accounts data
     Route::post('get/accounts',[\App\Http\Controllers\AccountsController::class, 'getAccounts']);
     //get billers data
     Route::post('get/billers',[\App\Http\Controllers\BillersGetController::class, 'getBillers']);
+    //get billers data
+    Route::post('get/branch',[\App\Http\Controllers\BranchController::class, 'getBranch']);
+
+    //Payments
+    Route::post('post/payments',[\App\Http\Controllers\PaymentsController::class, 'postPayments']);
+
+    //Drivers
+    Route::post('get/drivers',[\App\Http\Controllers\DriversController::class, 'getDrivers']);
+
+    //deliveries
+    Route::post('post/delivery',[\App\Http\Controllers\DeliveryController::class, 'postDelivery']);
 });

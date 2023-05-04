@@ -110,13 +110,13 @@ class NetsuiteConnectorController extends Controller
             ));
             $response = curl_exec($curl);
 
-            dd($response);
+            //dd($response);
             $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
             curl_close($curl);
 
 
             if($httpcode !=204 && $httpcode!=200 ){
-                return (['statusCode'=>$httpcode,'response'=>'Something Went Wrong','message'=>($response)]);
+                return (['statusCode'=>$httpcode,'response'=>'Something Went Wrong','message'=>json_decode($response)]);
             }else{
                 return (array("statusCode"=>200,"response"=>'Success','message'=>json_decode($response)));
 

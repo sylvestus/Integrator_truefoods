@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CompanyMaster;
 use Illuminate\Http\Request;
 
-class LocationController extends Controller
+class BranchController extends Controller
 {
 
 
@@ -24,7 +24,7 @@ class LocationController extends Controller
     }
 
 
-    public function getLocation(Request $request)
+    public function getBranch(Request $request)
     {
         try {
             $company_id = $request->company_id;
@@ -43,7 +43,7 @@ class LocationController extends Controller
             }else{
                 $account_number = $company_data->account_number;
             }
-            $url = "https://".$account_number.".restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=customscript_get_location&deploy=customdeploy_get_location";
+            $url = "https://".$account_number.".restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=customscript_get_branch&deploy=customdeploy_get_branch";
             //$url = "https://".$account_number.".restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=customscript_get_accounts&deploy=customdeployget_accounts";
             $method = "GET";
             $data = "";
