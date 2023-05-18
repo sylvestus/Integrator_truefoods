@@ -89,6 +89,7 @@ class NetsuiteConnectorController extends Controller
 
     public function callCurl($header,$url,$data,$method){
         try{
+            //dd($data);
             $curl = curl_init();
             curl_setopt_array($curl, array(
                 CURLOPT_URL => $url,
@@ -110,7 +111,7 @@ class NetsuiteConnectorController extends Controller
             ));
             $response = curl_exec($curl);
 
-            //dd($response);
+           // dd($response);
             $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
             curl_close($curl);
 

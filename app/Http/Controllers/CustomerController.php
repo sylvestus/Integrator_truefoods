@@ -106,8 +106,8 @@ class CustomerController extends Controller
                 'firstname' => $customer['name'],
                 'lastname' => $customer['name'],
                 'email' => $customer['email'],
-                'phone' => $customer['phone'],
-                'cseg_nn_branch' => ['id' =>  $customer['branch_id']]
+                'phone' => $customer['phone']
+                //'cseg_nn_branch' => ['id' =>  $customer['branch_id']]
                 /*,
 
                 'addressbook' => array(

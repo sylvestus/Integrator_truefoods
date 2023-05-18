@@ -86,4 +86,7 @@ Route::middleware('auth:api')->group(function () {
 
     //deliveries
     Route::post('post/delivery',[\App\Http\Controllers\DeliveryController::class, 'postDelivery']);
+
+    //Returns
+    Route::post('post/returns',[\App\Http\Controllers\ReturnsController::class, 'postReturns']);
 });
