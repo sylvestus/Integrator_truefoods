@@ -101,7 +101,7 @@ class CustomerGetController extends Controller
             return response()->json(['statusCode' => 300, 'response' => 'Something went wrong',
                 'message' => 'Error: ' . $ex->getMessage() . ' File: ' . $ex->getFile() . ' Line: ' . $ex->getLine()]);
         }
-    }git
+    }
 
     public function searchCustomers($request,$email,$phone)
     {
