@@ -44,7 +44,7 @@ class CategoriesGetController extends Controller
                 $account_number = $company_data->account_number;
             }
             //$url = "https://".$account_number.".restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=customscript_get_categories&deploy=customdeploy_get_categories";
-            $url = "https://".$account_number.".restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=customscript_get_item_class&deploy=customdeploy_get_item_class";
+            $url = "https://".$account_number.".restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=customscript_get_categories&deploy=customdeploy_get_categories";
             $method = "GET";
             $data = "";
             $data = json_decode($data);
