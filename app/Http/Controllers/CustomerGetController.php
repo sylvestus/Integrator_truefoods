@@ -125,11 +125,12 @@ class CustomerGetController extends Controller
            // $url = "https://".$account_number.".restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=customscript_search_customer&deploy=customdeploy_search_customer?q=email=".$email;
             $url = "https://".$account_number.".restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=customscript_search_customer&deploy=customdeploy_search_customer&email=".$email.'&phone='.$phone;
             //dd($url);
-            $method = "POST";
+            $method = "GET";
             $data = "";
             $data = json_decode($data);
 
             $send_request = $this->netsuite_connector->callRestApi($url, $method, $data, $company_data, $environment);
+           // dd($send_request);
             if ($send_request['statusCode'] != 200) {
                 return $send_request;
             } else {

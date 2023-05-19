@@ -90,6 +90,7 @@ class CustomerController extends Controller
             $phone  = $customer['phone'];
             $email  = $customer['email'];
             $exists = $this->customer_get->searchCustomers($rq, $email, $phone);
+            //dd($exists);
             $results = $exists['message']->results;
             //dd($exists);
 
