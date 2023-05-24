@@ -29,6 +29,7 @@ class ItemGetController extends Controller
         try {
             $company_id = $request->company_id;
             $environment = $request->environment;
+            $last_refresh = $request->last_refresh;
             /*$rep_id  = $request->rep_id;
             $customer_id  = $request->customer_id;
             $start_date  = $request->start_date;
@@ -43,7 +44,13 @@ class ItemGetController extends Controller
             }else{
                 $account_number = $company_data->account_number;
             }
-            $url = "https://".$account_number.".restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=customscript_get_items&deploy=customdeploy_get_items";
+            if($last_refresh != ""){
+                $url = "https://".$account_number.".restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=customscript_get_items&deploy=customdeploy_get_items";
+               // $url = "https://".$account_number.".restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=customscript_get_items&deploy=customdeploy_get_items&last_refresh=".$last_refresh;
+
+            }else{
+                $url = "https://".$account_number.".restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=customscript_get_items&deploy=customdeploy_get_items";
+            }
             $method = "GET";
             $data = "";
             $data = json_decode($data);

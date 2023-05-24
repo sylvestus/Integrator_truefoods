@@ -52,11 +52,56 @@ class UomGetController extends Controller
 
 
             $send_request = $this->netsuite_connector->callRestApi($url, $method, $data, $company_data, $environment);
+            //dd($send_request['message']);
             if ($send_request['statusCode'] != 200) {
                 return $send_request;
             } else {
                 $data = $send_request['message'];
-                return ['statusCode' => 200, 'response' => 'Success', 'message' => $data];
+                return ['statusCode' => 200, 'response' => 'Success', 'message' =>($data)];
+            }
+
+        } catch (\Exception $ex) {
+            return response()->json(['statusCode' => 300, 'response' => 'Something went wrong',
+                'message' => 'Error: ' . $ex->getMessage() . ' File: ' . $ex->getFile() . ' Line: ' . $ex->getLine()]);
+        }
+    }
+
+    public function getUnit(Request $request)
+    {
+        try {
+            $company_id = $request->company_id;
+            $environment = $request->environment;
+            $unit_name = $request->unit_name;
+
+            /*$rep_id  = $request->rep_id;
+            $customer_id  = $request->customer_id;
+            $start_date  = $request->start_date;
+            $end_date = $request->end_date;
+            $invoice_number = $request->invoice_number;*/
+
+            $company_data = CompanyMaster::where('id', $company_id)->first();
+
+
+            if($environment == 'sandbox'){
+                $account_number = $company_data->account_number.'-sb1';
+            }else{
+                $account_number = $company_data->account_number;
+            }
+            $url = "https://".$account_number.".restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=customscript_search_units_by_name&deploy=customdeploy_search_units_by_name&scriptParameter=".$unit_name;
+            // $url = "https://".$account_number.".restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=customscript_get_categories&deploy=customdeploy_get_categories";
+            $method = "GET";
+            $data = "";
+            $data = json_decode($data);
+
+
+
+            $send_request = $this->netsuite_connector->callRestApi($url, $method, $data, $company_data, $environment);
+            //dd($send_request['message']);
+            if ($send_request['statusCode'] != 200) {
+                return $send_request;
+            } else {
+                $data = $send_request['message'];
+                return ['statusCode' => 200, 'response' => 'Success', 'message' =>($data)];
             }
 
         } catch (\Exception $ex) {

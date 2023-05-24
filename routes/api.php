@@ -34,7 +34,7 @@ Route::middleware('auth:api')->group(function () {
     //invoices
     Route::post('search/invoices',[\App\Http\Controllers\SalesOrderController::class, 'searchInvoices']);
     Route::post('get/invoices',[\App\Http\Controllers\InvoiceController::class, 'getInvoices']);
-    Route::post('post/invoices',[\App\Http\Controllers\InvoiceController::class, 'postInvoices']);
+    Route::post('post/invoices',[\App\Http\Controllers\InvoiceController::class, 'postInvoicesnew']);
     Route::post('post/update_invoice_status',[\App\Http\Controllers\InvoiceController::class, 'updateInvoicePaymentStatus']);
     Route::post('post/update_sale_status',[\App\Http\Controllers\InvoiceController::class, 'updateAllSaleStatus']);
 
@@ -62,6 +62,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('get/taxCode',[\App\Http\Controllers\TaxCodeController::class, 'getTaxCode']);
     //UOM  data
     Route::post('get/uom',[\App\Http\Controllers\UomGetController::class, 'getUomData']);
+    Route::post('get/unit_id',[\App\Http\Controllers\UomGetController::class, 'getUnit']);
     //UOM  Types
     Route::post('get/uom_type',[\App\Http\Controllers\UomTypesGetController::class, 'getUomTypes']);
     //Location Qty
