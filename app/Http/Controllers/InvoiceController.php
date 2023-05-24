@@ -347,7 +347,7 @@ class InvoiceController extends Controller
             $returns = new ReturnsController();
 //            $invoice = $returns->getInvoice($company_id,$environment,$invoice_number);
 
-            $invoice = ['statusCode' => 200];
+            $invoice = ['statusCode' => 300];
             if ($invoice['statusCode'] == 200) {
                 return ['status' => 404, 'message' => 'Invoice Exists in Netsuite'];
             } else {
