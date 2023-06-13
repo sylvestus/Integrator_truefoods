@@ -56,9 +56,7 @@ class InvoiceController extends Controller
                         $not_created[$key]['message'] = $formatted_order['message'];
                     } else {
                         $data = json_encode($formatted_order['message']);
-                        // return ($data);
                         $response = $this->netsuite_connector->callRestApi($url, $method, $data, $company_data, $environment);
-                        //dd('jere');
                         if ($response['statusCode'] != 200) {
                             $not_created[$key]['invoice_number'] = $order['invoice_number'];
                             $not_created[$key]['message'] = $response['message'];
@@ -136,7 +134,7 @@ class InvoiceController extends Controller
                 $account_number = $company_data->account_number;
             }
 
-            $url = "https://" . $account_number . ".suitetalk.api.netsuite.com/services/rest/record/v1/invoice?q=custbody_nn_pa_posno+CONTAIN+" . $order_number;
+            $url = "https://" . $account_number . ".suitetalk.api.netsuite.com/services/rest/record/v1/invoice?q=custbody_nn_pa_posno+CONTAIN+" .   $order_number;
             // return $url;
             $method = "GET";
             $data = "";
@@ -307,6 +305,31 @@ class InvoiceController extends Controller
 
     }
 
+    public function getInvoice($company_id,$environment,$invoice_number){
+        try {
+            $company_data = CompanyMaster::where('id', $company_id)->first();
+            if($environment == 'sandbox'){
+                $account_number = $company_data->account_number.'-sb1';
+            }else{
+                $account_number = $company_data->account_number;
+            }
+            $url = "https://".$account_number .".restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=customscript_search_invoice&deploy=customdeploy_search_invoice&reference_number=".$invoice_number;
+            $method = "GET";
+            $data = "";
+            $data = json_decode($data);
+            $response = $this->netsuite_connector->callRestApi($url,$method,$data,$company_data,$environment);
+
+            if($response['statusCode'] != 200){
+                return $response;
+            }else{
+                $data  = $response['message'];
+                return ['statusCode'=>200,'response'=>'Success','message'=>$data];
+            }
+        } catch (\Exception $ex) {
+            return response()->json(['statusCode' => 300, 'response' => 'Something went wrong',
+                'message' => 'Error: '.$ex->getMessage().' File: '.$ex->getFile().' Line: '.$ex->getLine()]);
+        }
+    }
     //creating invoice via script
     public function postInvoicesnew(Request $request)
     {
@@ -323,8 +346,6 @@ class InvoiceController extends Controller
                 //$invoice_date = $invoice->date('Y-m-d');
             }
 
-            //dd($company_id);
-
             $company_data = CompanyMaster::where('id', $company_id)->first();
             // dd($company_id);
 
@@ -338,28 +359,18 @@ class InvoiceController extends Controller
             }
 
             $invoice_number = $data_return['invoice_number'];
-            /*$exists = $this->findReturn($company_id,$environment,$return_number);
+            $invoice = $this->findInvoice($company_id,$environment,$invoice_number);
 
-            if($exists['message']->count > 0){
+            //$invoice = ['statusCode' => 300];
+            if($invoice['message']->count > 0){
                 return ['status'=>202,'message'=>'Invoice exists in netsuite'];
-            }*/
-            //invoice id
-            $returns = new ReturnsController();
-//            $invoice = $returns->getInvoice($company_id,$environment,$invoice_number);
-
-            $invoice = ['statusCode' => 300];
-            if ($invoice['statusCode'] == 200) {
-                return ['status' => 404, 'message' => 'Invoice Exists in Netsuite'];
             } else {
-                /* $invoice_id = $invoice['message'][0]->internalid;*/
-
-
                 $url = "https://" . $account_number . ".restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=customscript_create_invoice&deploy=customdeploy_create_invoice&invoice_date=" . $invoice_date . "&invoice_number=" . $invoice_number . "&discount_amount=" . $discount_amount;
-                //$url = "https://".$account_number.".restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=customscript_get_accounts&deploy=customdeployget_accounts";
                 $method = "POST";
                 $data = "";
                 $data = json_encode($data_return);
                 $send_request = $this->netsuite_connector->callRestApi($url, $method, $data, $company_data, $environment);
+
                 if ($send_request['statusCode'] != 200) {
                     return $send_request;
                 } else {
@@ -369,7 +380,7 @@ class InvoiceController extends Controller
 
             }
 
-            return response()->json(['statusCode' => 404, 'response ' => "Orders missing", 'message' => 'Add at least one order and try again']);
+            return response()->json(['statusCode' => 404, 'response ' => "Orders missing", 'message' => 'Add at least one invoice and try again']);
 
         } catch (\Exception $ex) {
             return response()->json(['statusCode' => 300, 'response' => 'Something went wrong',

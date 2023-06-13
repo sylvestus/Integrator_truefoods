@@ -26,8 +26,6 @@ class NetsuiteConnectorController extends Controller
             $oauth_timestamp = time();
             $oauth_signature_method = 'HMAC-SHA256';
             $oauth_version = "1.0";
-
-
             $company_master = $company_data;
             $account_number = $company_master->account_number;
 
@@ -110,7 +108,6 @@ class NetsuiteConnectorController extends Controller
                 ),
             ));
             $response = curl_exec($curl);
-
 
             $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
             curl_close($curl);

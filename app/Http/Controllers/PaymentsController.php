@@ -38,7 +38,7 @@ class PaymentsController extends Controller
             }else{
                 $account_number = $company_data->account_number;
             }
-            $url = "https://".$account_number .".suitetalk.api.netsuite.com/services/rest/record/v1/customrecord_pos";
+            $url = "https://7569482-sb1.suitetalk.api.netsuite.com/services/rest/record/v1/customerPayment";
             $method = "POST";
             $received_data = $request->receipt;
             // return ($received_data);
@@ -56,15 +56,14 @@ class PaymentsController extends Controller
                         $not_created[$key]['message']= $formatted_order['message'];
                     }else{
                         $data = json_encode($formatted_order['message']);
-                        // return ($data);
                         $response = $this->netsuite_connector->callRestApi($url,$method,$data,$company_data,$environment);
-                        //dd('jere');
+                        //dd($response);
                         if($response['statusCode'] != 200){
                             $not_created[$key]['receipt_number']= $receipt['receipt_number'];
                             $not_created[$key]['message']= $response['message'];
                             return response()->json(['statusCode'=>300,'message'=>$response['message']]);
                         }else{
-                            $orders_created[] =$receipt['invoice_number'];
+                            $orders_created[] =$receipt['receipt_number'];
                             return response()->json(['statusCode'=>200,'message'=>$response['message']]);
                         }
                     }
@@ -85,27 +84,53 @@ class PaymentsController extends Controller
             //dd($oh);
             $company_id = $rq->company_id;
             $environment = $rq->environment;
-            $order_number = $oh['receipt_number'];
+            $receipt_number = $oh['receipt_number'];
+            $sale_number = $oh['sale_number'];
+
             //return ['status'=>202,'message'=>$environment];
-            $exists = $this->findPayment($company_id,$environment,$order_number);
+//            $exists = $this->findPayment($company_id,$environment,$receipt_number);
+//
+//            if($exists['message']->count > 0){
+//                return ['status'=>202,'message'=>'Payment exists in netsuite'];
+//            }
 
-            if($exists['message']->count > 0){
-                return ['status'=>202,'message'=>'Payment exists in netsuite'];
+            //get invoice netsuite internal id
+            $invoice = new InvoiceController();
+            $get_invoice_id = $invoice->getInvoice($company_id,$environment,$sale_number);
+            if($get_invoice_id['statusCode']!=200){
+                return  $get_invoice_id;
+            }else{
+                if(count($get_invoice_id['message'])>0){
+                    $invoice_id =  $get_invoice_id['message'][0]->internalid;
+                }else{
+                    return  ['statusCode'=>404,'message'=>'Invoice not found'];
+                }
+
             }
-            // dd($items_data);
 
-            $payload = [
-                'recordtype'                        => 'customrecord_pos',
-                'custrecord_paymentrefno'           => $oh['sale_number'],
-                'custrecord_posreceipt'             => $oh['receipt_number'],
-                'custrecord_billcustomer'           => $oh['customer_erp_id'],
-                'custrecord_pdate'                  => date('Y-m-d\TH:i:s.00\Z', strtotime($oh['created_at'])),
-                'cseg_nn_branch'                    => ['id' => $oh['branch_id']],
-                'custrecord_billlocation'           => $oh['warehouse_erp_id'],
-                'custrecord_receiptaccount'         => $oh['erp_account_id'],
-                'custrecord_invoiceno'              => ['refName'=>$oh['sale_number']],
-                'custrecord_paymentamount'          => $oh['amount']
-            ];
+            if($oh['branch_id']==1){
+                $account = "846";
+            }else{
+                $account = "845";
+            }
+
+            $items = [];
+            //$items['doc']        = ['apply'=>true, 'id'=>$erp_id];
+            $items['amount']     = floatval($oh['amount']);
+            $payload = array(
+                'recordtype'   => 'customerPayment',
+                'account'      => ['id' => $account],
+                'autoapply'    => 'false',
+                //'apply'        => ['items' => [$items]],
+                'currency'     => ['id' => 1],
+                'customer'     => ['id' => $oh['customer_erp_id']],
+                //'customform'   => ['id' => 70],
+                'memo'         => "Payment from pos",
+                'payment'      => floatval($oh['amount']),
+                'paymentdate'  => date('Y-m-d\TH:i:s.00\Z', strtotime($oh['created_at'])),
+                'tranDate'     => date('Y-m-d\TH:i:s.00\Z', strtotime($oh['created_at'])),
+                'invoice'      => ['id' => $invoice_id] // Add the invoice ID here
+            );
 
             return ['status'=>200,'message'=> $payload];
         }catch(Exception $ex){
