@@ -90,4 +90,10 @@ Route::middleware('auth:api')->group(function () {
 
     //Returns
     Route::post('post/returns',[\App\Http\Controllers\ReturnsController::class, 'postReturns']);
+
+    //sarit city
+    //invoices
+    Route::post('sarit/post/invoices',[\App\Http\Controllers\SaritInvoiceController::class, 'postSaritInvoice']);
+    //cash sales
+    Route::post('sarit/post/cashsales',[\App\Http\Controllers\SaritICashSalesController::class, 'postSaritCashSale']);
 });
