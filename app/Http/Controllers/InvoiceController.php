@@ -334,7 +334,6 @@ class InvoiceController extends Controller
     public function postInvoicesnew(Request $request)
     {
         try {
-            // return $request->all();
             $company_id = $request->company_id;
             $environment = $request->environment;
             foreach ($request->invoice as $invoice) {
@@ -347,8 +346,6 @@ class InvoiceController extends Controller
             }
 
             $company_data = CompanyMaster::where('id', $company_id)->first();
-            // dd($company_id);
-
 
             $data = $request->all();
             $data_return = $data['invoice'][0];
@@ -363,19 +360,24 @@ class InvoiceController extends Controller
 
             //$invoice = ['statusCode' => 300];
             if($invoice['message']->count > 0){
-                return ['status'=>202,'message'=>'Invoice exists in netsuite'];
+                return ['statusCode'=>200,'message'=>'Invoice exists in netsuite'];
             } else {
                 $url = "https://" . $account_number . ".restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=customscript_create_invoice&deploy=customdeploy_create_invoice&invoice_date=" . $invoice_date . "&invoice_number=" . $invoice_number . "&discount_amount=" . $discount_amount;
                 $method = "POST";
                 $data = "";
                 $data = json_encode($data_return);
                 $send_request = $this->netsuite_connector->callRestApi($url, $method, $data, $company_data, $environment);
-
+                //dd($send_request);
                 if ($send_request['statusCode'] != 200) {
                     return $send_request;
                 } else {
                     $data = $send_request['message'];
-                    return ['statusCode' => 200, 'response' => 'Success', 'message' => $data];
+                    if($data->success){
+                        return ['statusCode' => 200, 'response' => 'Success', 'message' => $data];
+                    }else{
+                        return ['statusCode' => 300, 'response' => 'Error', 'message' => $data];
+                    }
+
                 }
 
             }

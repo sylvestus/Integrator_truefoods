@@ -11,6 +11,7 @@ class PassportAuthController extends Controller
 {
     public function register(Request $request)
     {
+       // return $request->all();
       try{
           $this->validate($request, [
               'company_id' => 'required',

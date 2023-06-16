@@ -17,7 +17,7 @@ use  App\Http\Controllers\PostController;
 */
 
 
-Route::post('register-user', [PassportAuthController::class, 'register']);
+Route::post('register', [PassportAuthController::class, 'register']);
 Route::post('login', [PassportAuthController::class, 'login']);
 Route::middleware('auth:api')->group(function () {
     Route::post('sales_order', PostController::class);
