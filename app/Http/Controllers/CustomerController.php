@@ -87,9 +87,12 @@ class CustomerController extends Controller
 
             $company_id = $rq->company_id;
             $environment = $rq->environment;
-            $phone  = $customer['phone'];
+            $phone = $customer['phone'];
+            $phone = str_replace(' ', '', $phone);
             $email  = $customer['email'];
             $exists = $this->customer_get->searchCustomers($rq, $email, $phone);
+
+
 
             $results = $exists['message']->results;
             //dd($exists);
@@ -97,15 +100,22 @@ class CustomerController extends Controller
             if($exists['statusCode']== 200 && !empty($results)){
                 return ['status' => 404, 'message' => $results];
             }
-
+            $customer_name = $customer['name'];
+            if (preg_match('/^(.*?)\s*\((.*?)\)$/', $customer_name, $matches)) {
+                $last_name = $matches[1]; // Last name without the parentheses
+                $value_in_brackets = $matches[2]; // Value within the parentheses
+            } else {
+                $last_name = $customer_name; // Assign the whole name as the last name
+                $value_in_brackets = ''; // No value within brackets
+            }
 
             $rqrd = array(
                 'recordtype' => 'customer',
                 'subsidiary' => ['id' =>  $customer['subsidiary']],
                 'category' => ['id' =>  $customer['category']],
                 'companyname' => $customer['name'],
-                'firstname' => $customer['name'],
-                'lastname' => $customer['name'],
+                'firstname' => $last_name,
+                'lastname' => $value_in_brackets,
                 'email' => $customer['email'],
                 'phone' => $customer['phone']
             );
