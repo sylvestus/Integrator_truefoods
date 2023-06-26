@@ -96,4 +96,6 @@ Route::middleware('auth:api')->group(function () {
     Route::post('sarit/post/invoices',[\App\Http\Controllers\SaritInvoiceController::class, 'postSaritInvoice']);
     //cash sales
     Route::post('sarit/post/cashsales',[\App\Http\Controllers\SaritICashSalesController::class, 'postSaritCashSale']);
+    //Redemption
+    Route::post('sarit/post/redemptions',[\App\Http\Controllers\SaritIRedemptionController::class, 'postSaritRedemptions']);
 });

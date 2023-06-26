@@ -108,17 +108,6 @@ class CustomerController extends Controller
                 'lastname' => $customer['name'],
                 'email' => $customer['email'],
                 'phone' => $customer['phone']
-                //'cseg_nn_branch' => ['id' =>  $customer['branch_id']]
-                /*,
-
-                'addressbook' => array(
-                    array(
-                        'defaultbilling' => true,
-                        'defaultshipping' => true,
-                        'addr1' => $customer['address'],
-                        'city' => $customer['city'],
-                    )
-                )*/
             );
 
             return ['status' => 200, 'message' => $rqrd];
