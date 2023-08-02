@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\CreateInvoicesJob;
 use App\Models\CompanyMaster;
 use Illuminate\Http\Request;
 use PHPUnit\Exception;
@@ -27,47 +28,27 @@ class SaritInvoiceController extends Controller
     public function postSaritInvoice(Request $request)
     {
         try {
-            // return $request->all();
+             //return $request->all();
             $company_id = $request->company_id;
             $environment = $request->environment;
-
-            $fp = fopen('invoice_request_data.txt', 'a');
-            fwrite($fp, json_encode($request->all()));
-            fclose($fp);
-
-
-            $company_data = CompanyMaster::where('id', $company_id)->first();
-
-            $data = $request->all();
-            $data_return = $data['invoice'][0];
-            if ($environment == 'sandbox') {
-                $account_number = $company_data->account_number . '-sb1';
-            } else {
-                $account_number = $company_data->account_number;
+            $invoice = $request->invoice;
+//            $handler = fopen('invoice_request.txt','a');
+//            fwrite($handler,json_encode($request->all()));
+//            fclose($handler);
+            if(count($invoice)<1){
+                return response()->json(['status'=>300,'message' => 'Request Missing Invoice Records']);
             }
 
-            $invoice_number = $data_return['invoice_number'];
-            $invoice = $this->findInvoice($company_id,$environment,$invoice_number);
+            if($company_id && $environment){
 
-            //$invoice = ['statusCode' => 300];
-            if($invoice['message']->count > 0){
-                return ['status'=>202,'message'=>'Invoice exists in netsuite'];
-            } else {
-                $url = "https://" . $account_number . ".restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=customscript_create_invoice&deploy=customdeploy_create_invoice";
-                $method = "POST";
-                $data = "";
-                $data = json_encode($data_return);
-                $send_request = $this->netsuite_connector->callRestApi($url, $method, $data, $company_data, $environment);
-
-                if ($send_request['statusCode'] != 200) {
-                    return $send_request;
-                } else {
-                    $data = $send_request['message'];
-                    return ['statusCode' => 200, 'response' => 'Success', 'message' => $data];
-                }
+                dispatch(new CreateInvoicesJob($request->all()));
+                // Return a response to the original request
+                return response()->json(['status'=>200,'message' => 'Invoice processing started']);
+            }else{
+                return response()->json(['status'=>300,'message' => 'Invalid Request body']);
             }
 
-            return response()->json(['statusCode' => 404, 'response ' => "Orders missing", 'message' => 'Add at least one invoice and try again']);
+
 
         } catch (\Exception $ex) {
             return response()->json(['statusCode' => 300, 'response' => 'Something went wrong',

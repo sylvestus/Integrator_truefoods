@@ -19,6 +19,7 @@ use  App\Http\Controllers\PostController;
 
 Route::post('register', [PassportAuthController::class, 'register']);
 Route::post('login', [PassportAuthController::class, 'login']);
+Route::post('callback', [\App\Http\Controllers\CallbackController::class, 'handleCallback']);
 Route::middleware('auth:api')->group(function () {
     Route::post('sales_order', PostController::class);
     Route::get('company-master/getAll',[\App\Http\Controllers\CompanyMasterController::class, 'getAllCompany'])->name('company_master.get.ALl');
@@ -98,4 +99,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('sarit/post/cashsales',[\App\Http\Controllers\SaritICashSalesController::class, 'postSaritCashSale']);
     //Redemption
     Route::post('sarit/post/redemptions',[\App\Http\Controllers\SaritIRedemptionController::class, 'postSaritRedemptions']);
+
+    //callback
+
 });
