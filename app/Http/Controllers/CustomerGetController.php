@@ -106,6 +106,7 @@ class CustomerGetController extends Controller
     public function searchCustomers($request,$email,$phone)
     {
         try {
+
             $company_id = $request->company_id;
             $environment = $request->environment;
             /*$rep_id  = $request->rep_id;

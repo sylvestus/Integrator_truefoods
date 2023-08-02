@@ -31,10 +31,12 @@ class SaritInvoiceController extends Controller
             $company_id = $request->company_id;
             $environment = $request->environment;
 
+            $fp = fopen('invoice_request_data.txt', 'a');
+            fwrite($fp, json_encode($request->all()));
+            fclose($fp);
+
 
             $company_data = CompanyMaster::where('id', $company_id)->first();
-            // dd($company_id);
-
 
             $data = $request->all();
             $data_return = $data['invoice'][0];

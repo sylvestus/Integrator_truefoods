@@ -53,7 +53,7 @@ class CustomerController extends Controller
 
                     } else {
                         $data = json_encode($formatted_order['message']);
-                         //return ($data);
+
                         $response = $this->netsuite_connector->callRestApi($url, $method, $data, $company_data, $environment);
                        // dd($response);
                         if ($response['statusCode'] != 200) {
@@ -62,9 +62,15 @@ class CustomerController extends Controller
                             return response()->json(['statusCode' => 300, 'message' => $response['message']]);
                         } else {
                             $orders_created[] = $customer['name'];
-                            //dd($response);
+
                             $customer = $this->customer_get->searchCustomers($request,$customer['email'], $customer['phone']);
-                            //dd($customer['message']);
+                            $data = $customer['message'];
+                           // dd($customer);
+                            if($data->results){
+                              //  dd($customer);
+
+                            }
+                            //dd($data);
                             return response()->json(['statusCode' => 200, 'message' => $customer['message']->results]);
                         }
                     }
@@ -92,10 +98,7 @@ class CustomerController extends Controller
             $email  = $customer['email'];
             $exists = $this->customer_get->searchCustomers($rq, $email, $phone);
 
-
-
             $results = $exists['message']->results;
-            //dd($exists);
 
             if($exists['statusCode']== 200 && !empty($results)){
                 return ['status' => 404, 'message' => $results];
