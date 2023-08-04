@@ -32,9 +32,9 @@ class SaritInvoiceController extends Controller
             $company_id = $request->company_id;
             $environment = $request->environment;
             $invoice = $request->invoice;
-//            $handler = fopen('invoice_request.txt','a');
-//            fwrite($handler,json_encode($request->all()));
-//            fclose($handler);
+            $handler = fopen('invoice_request'.date('d_m_yyyy').'.txt','a');
+            fwrite($handler,json_encode($request->all()));
+            fclose($handler);
             if(count($invoice)<1){
                 return response()->json(['status'=>300,'message' => 'Request Missing Invoice Records']);
             }
