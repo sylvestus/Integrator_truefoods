@@ -92,7 +92,7 @@ class CreateInvoicesJob implements ShouldQueue
             $response  = ['status'=>500, 'response'=>'failed','message'=>$ex->getMessage()];
         }
 
-        $handler = fopen("response_sent_to_url_" . $this->requestData['callback_url'] . "_" . date('d-m-Y') . ".txt", "a");
+        $handler = fopen("response_sent_to_url_" . date('d-m-Y') . ".txt", "a");
         fwrite($handler,json_encode($response));
         fclose($handler);
         //create a call to callback ul and return the response
