@@ -32,7 +32,8 @@ class SaritInvoiceController extends Controller
             $company_id = $request->company_id;
             $environment = $request->environment;
             $invoice = $request->invoice;
-            $handler = fopen('invoice_request'.date('d_m_yyyy').'.txt','a');
+            $handler = fopen("invoice_request_" . date('d-m-Y') . ".txt", "a");
+
             fwrite($handler,json_encode($request->all()));
             fclose($handler);
             if(count($invoice)<1){
