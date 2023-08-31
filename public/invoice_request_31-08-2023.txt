@@ -1,0 +1,1 @@
+{"environment":"sandbox","company_id":"6","record_type":"invoice","invoice":[{"customer_id":"4835","invoice_number":"1ddddss","subsidiary":"5","created_at":"13\/06\/2023","comments":"test by Jeremy","item":[{"item_id":"900","item_description":"Item item_description","quantity":1,"rate":1448.2776000000001}]}],"callback_url":"http:\/\/127.0.0.1:8000\/api\/callback"}

@@ -16,6 +16,6 @@ class CallbackController extends Controller
         fclose($handler);
         // You can perform any necessary processing on $data
         // Send a response back
-        return response()->json(['message' => 'Callback received successfully']);
+        return response()->json(['message' => 'Callback response received successfully','data'=>($data)]);
     }
 }
