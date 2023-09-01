@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\CreateRedemptionsJob;
 use App\Models\CompanyMaster;
 use Illuminate\Http\Request;
 use PHPUnit\Exception;
@@ -25,6 +26,37 @@ class SaritIRedemptionController extends Controller
     }
 
     public function postSaritRedemptions(Request $request)
+    {
+        try {
+            // return $request->all();
+            $company_id = $request->company_id;
+            $environment = $request->environment;
+            $redemption = $request->redemption;
+
+            $handler = fopen("redemption_request_" . date('d-m-Y') . ".txt", "a");
+
+            fwrite($handler,json_encode($request->all()));
+            fclose($handler);
+            if(count($redemption)<1){
+                return response()->json(['status'=>300,'message' => 'Request Missing redemption Records']);
+            }
+
+            if($company_id && $environment){
+
+                dispatch(new CreateRedemptionsJob($request->all()));
+                // Return a response to the original request
+                return response()->json(['status'=>200,'message' => 'Redemption processing started']);
+            }else{
+                return response()->json(['status'=>300,'message' => 'Invalid Request body']);
+            }
+
+        } catch (\Exception $ex) {
+            return response()->json(['statusCode' => 300, 'response' => 'Something went wrong',
+                'message' => 'Error: ' . $ex->getMessage() . ' File: ' . $ex->getFile() . ' Line: ' . $ex->getLine()]);
+        }
+    }
+
+    public function postSaritRedemptionsOld(Request $request)
     {
         try {
             // return $request->all();
@@ -69,6 +101,8 @@ class SaritIRedemptionController extends Controller
                 'message' => 'Error: ' . $ex->getMessage() . ' File: ' . $ex->getFile() . ' Line: ' . $ex->getLine()]);
         }
     }
+
+
 
     public function findRedemption($company_id, $environment, $order_number,$lms_no)
     {

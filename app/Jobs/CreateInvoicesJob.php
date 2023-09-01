@@ -51,6 +51,7 @@ class CreateInvoicesJob implements ShouldQueue
 
             $data = $this->requestData;
 
+
             if ($environment == 'sandbox') {
                 $account_number = $company_data->account_number . '-sb1';
             } else {
@@ -62,10 +63,13 @@ class CreateInvoicesJob implements ShouldQueue
             $failed_message = [];
             foreach ($data['invoice'] as $data_return){
                 $invoice_number = $data_return['invoice_number'];
+                //dd($invoice_number);
                 $invoice = $this->saritInvoiceController->findInvoice($company_id,$environment,$invoice_number);
 
-                if($invoice['message']->count > 0){
-                    $existing_invoices =  $invoice_number;
+                if(!$invoice['message']){
+                    $failed_invoices [] = ['invoice_number'=>$invoice_number,'message'=>'Something is wrong with this invoice number'];
+                }elseif($invoice['message']->count > 0){
+                    $existing_invoices [] =  $invoice_number;
                 } else {
                     $url = "https://" . $account_number . ".restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=customscript_create_invoice&deploy=customdeploy_create_invoice";
                     $method = "POST";
@@ -75,10 +79,10 @@ class CreateInvoicesJob implements ShouldQueue
 
                     if ($send_request['statusCode'] != 200) {
                         $data = $send_request['message'];
-                        $failed_invoices = ['invoice_number'=>$invoice_number,'message'=>$data];
+                        $failed_invoices [] = ['invoice_number'=>$invoice_number,'message'=>$data];
 
                     } else {
-                        $created_invoices = $invoice_number;
+                        $created_invoices[] = $invoice_number;
 
                     }
                 }
@@ -89,10 +93,10 @@ class CreateInvoicesJob implements ShouldQueue
 
             $response  = ['status'=>200, 'response'=>'completed','message'=>$message];
         }catch (\Exception $ex){
-            $response  = ['status'=>500, 'response'=>'failed','message'=>$ex->getMessage()];
+            $response  = ['status'=>500, 'response'=>'failed','message'=>$ex->getMessage() .' Line'.$ex->getLine()];
         }
 
-        $handler = fopen("response_sent_to_url" . date('d-m-Y') . ".txt", "a");
+        $handler = fopen("response_sent" . date('d-m-Y') . ".txt", "a");
         fwrite($handler,json_encode($response));
         fclose($handler);
         //create a call to callback ul and return the response

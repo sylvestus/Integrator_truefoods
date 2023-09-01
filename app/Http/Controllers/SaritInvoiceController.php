@@ -66,7 +66,7 @@ class SaritInvoiceController extends Controller
                 $account_number = $company_data->account_number;
             }
 
-            $url = "https://" . $account_number . ".suitetalk.api.netsuite.com/services/rest/record/v1/invoice?q=custbody_lms+CONTAIN+" .   $order_number;
+            $url = "https://" . $account_number . ".suitetalk.api.netsuite.com/services/rest/record/v1/invoice?q=custbody_lms+CONTAIN+" . $order_number;
             $method = "GET";
             $data = "";
             $data = json_decode($data);
