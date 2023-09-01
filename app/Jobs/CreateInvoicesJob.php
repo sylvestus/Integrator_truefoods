@@ -12,6 +12,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Http;
+use PHPUnit\Exception;
 
 class CreateInvoicesJob implements ShouldQueue
 {
@@ -64,28 +65,33 @@ class CreateInvoicesJob implements ShouldQueue
             foreach ($data['invoice'] as $data_return){
                 $invoice_number = $data_return['invoice_number'];
                 //dd($invoice_number);
-                $invoice = $this->saritInvoiceController->findInvoice($company_id,$environment,$invoice_number);
+                try{
+                    $invoice = $this->saritInvoiceController->findInvoice($company_id,$environment,$invoice_number);
 
-                if(!$invoice['message']){
-                    $failed_invoices [] = ['invoice_number'=>$invoice_number,'message'=>'Something is wrong with this invoice number'];
-                }elseif($invoice['message']->count > 0){
-                    $existing_invoices [] =  $invoice_number;
-                } else {
-                    $url = "https://" . $account_number . ".restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=customscript_create_invoice&deploy=customdeploy_create_invoice";
-                    $method = "POST";
-                    $data = "";
-                    $data = json_encode($data_return);
-                    $send_request = $this->netsuite_connector->callRestApi($url, $method, $data, $company_data, $environment);
-
-                    if ($send_request['statusCode'] != 200) {
-                        $data = $send_request['message'];
-                        $failed_invoices [] = ['invoice_number'=>$invoice_number,'message'=>$data];
-
+                    if(!$invoice['message']){
+                        $failed_invoices [] = ['invoice_number'=>$invoice_number,'message'=>'Something is wrong with this invoice number'];
+                    }elseif($invoice['message']->count > 0){
+                        $existing_invoices [] =  $invoice_number;
                     } else {
-                        $created_invoices[] = $invoice_number;
+                        $url = "https://" . $account_number . ".restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=customscript_create_invoice&deploy=customdeploy_create_invoice";
+                        $method = "POST";
+                        $data = "";
+                        $data = json_encode($data_return);
+                        $send_request = $this->netsuite_connector->callRestApi($url, $method, $data, $company_data, $environment);
 
+                        if ($send_request['statusCode'] != 200) {
+                            $data = $send_request['message'];
+                            $failed_invoices [] = ['invoice_number'=>$invoice_number,'message'=>$data];
+
+                        } else {
+                            $created_invoices[] = $invoice_number;
+
+                        }
                     }
+                }catch (\Exception $ex ){
+                    $failed_invoices [] = ['redemption_number'=>$invoice_number,'message'=> $ex->getMessage() .' Line'.$ex->getLine()];
                 }
+
             }
             $message = ['posted_successfully'=>$created_invoices,
                 'existing'=>$existing_invoices,

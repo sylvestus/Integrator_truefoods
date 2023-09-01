@@ -93,7 +93,7 @@ class CreateRedemptionsJob implements ShouldQueue
 
                         }
                     }
-                }catch (Exception $ex){
+                }catch (\Exception $ex){
                     $failed_redemptions [] = ['redemption_number'=>$redemption_number,'message'=> $ex->getMessage() .' Line'.$ex->getLine()];
                 }
             }
