@@ -17,7 +17,7 @@ use  App\Http\Controllers\PostController;
 */
 
 
-Route::get('test-connection', [\App\Http\Controllers\CallbackController::class, 'testConnection']);
+Route::post('test-connection', [\App\Http\Controllers\CallbackController::class, 'testConnection']);
 Route::post('register', [PassportAuthController::class, 'register']);
 Route::post('login', [PassportAuthController::class, 'login']);
 Route::post('callback', [\App\Http\Controllers\CallbackController::class, 'handleCallback']);
