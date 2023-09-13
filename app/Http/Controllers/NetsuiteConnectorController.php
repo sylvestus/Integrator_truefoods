@@ -108,6 +108,8 @@ class NetsuiteConnectorController extends Controller
                 ),
             ));
             $response = curl_exec($curl);
+            //dd($data);
+
 
             $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
             curl_close($curl);

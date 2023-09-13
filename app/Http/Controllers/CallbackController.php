@@ -18,4 +18,9 @@ class CallbackController extends Controller
         // Send a response back
         return response()->json(['message' => 'Callback response received successfully','data'=>($data)]);
     }
+    public function testConnection(Request $request)
+    {
+
+        return response()->json(['status'=>200, 'message' => 'Connection to nsintegrator established successfully']);
+    }
 }
