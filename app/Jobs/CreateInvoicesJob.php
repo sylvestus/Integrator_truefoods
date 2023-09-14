@@ -90,7 +90,7 @@ class CreateInvoicesJob implements ShouldQueue
                         }
                     }
                 }catch (\Exception $ex ){
-                    $failed_invoices [] = ['redemption_number'=>$invoice_number,'message'=> $ex->getMessage() .' Line'.$ex->getLine()];
+                    $failed_invoices [] = ['invoice_number'=>$invoice_number,'message'=> $ex->getMessage() .' Line'.$ex->getLine()];
                 }
 
             }
