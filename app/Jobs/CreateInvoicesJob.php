@@ -110,9 +110,8 @@ class CreateInvoicesJob implements ShouldQueue
 
         $callbackUrl = $this->requestData['callback_url'];
         //dd($callbackUrl);
-        $handler = fopen("callbackurl" . date('d-m-Y') . ".txt", "a");
-        fwrite($handler,$callbackUrl);
-        fclose($handler);
+        //$handler = fopen("callbackurl" . date('d-m-Y') . ".txt", "a");
+
         try{
             $ch = curl_init($callbackUrl);
             curl_setopt($ch, CURLOPT_POST, 1);
@@ -121,40 +120,12 @@ class CreateInvoicesJob implements ShouldQueue
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Disable SSL verification
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             $responseFromCallback = curl_exec($ch);
-            dd($responseFromCallback);
+
         }catch(\Exception $x){
-            dd($x);
-        }
-        dd ('jeyyyy');
 
-// Process the response
-
-
-        $responseFromCallback = $response->getBody()->getContents();
-
-
-        $ch = curl_init($callbackUrl);
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($response));
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-        $responseFromCallback = curl_exec($ch);
-        $handler = fopen("callbackure" . date('d-m-Y') . ".txt", "a");
-        fwrite($handler,$callbackUrl);
-        fclose($handler);
-
-// Check for errors or process the response as needed
-        if (curl_errno($ch)) {
-            // Handle the error
-            echo 'Error: ' . curl_error($ch);
-        } else {
-            // Handle the response from the callback URL
-            echo 'Response from Callback: ' . $responseFromCallback;
         }
 
-// Close the cURL session
         curl_close($ch);
-       // Http::post($callbackUrl, $response);
+
     }
 }
