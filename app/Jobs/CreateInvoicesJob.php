@@ -108,6 +108,26 @@ class CreateInvoicesJob implements ShouldQueue
         //create a call to callback ul and return the response
 
         $callbackUrl = $this->requestData['callback_url'];
-        Http::post($callbackUrl, $response);
+
+        $ch = curl_init($callbackUrl);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($response));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        $responseFromCallback = curl_exec($ch);
+
+// Check for errors or process the response as needed
+        if (curl_errno($ch)) {
+            // Handle the error
+            echo 'Error: ' . curl_error($ch);
+        } else {
+            // Handle the response from the callback URL
+            echo 'Response from Callback: ' . $responseFromCallback;
+        }
+
+// Close the cURL session
+        curl_close($ch);
+       // Http::post($callbackUrl, $response);
     }
 }
