@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Http\Controllers\NetsuiteConnectorController;
 use App\Http\Controllers\SaritInvoiceController;
 use App\Models\CompanyMaster;
+use GuzzleHttp\Client;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -108,6 +109,29 @@ class CreateInvoicesJob implements ShouldQueue
         //create a call to callback ul and return the response
 
         $callbackUrl = $this->requestData['callback_url'];
+        //dd($callbackUrl);
+        $handler = fopen("callbackurl" . date('d-m-Y') . ".txt", "a");
+        fwrite($handler,$callbackUrl);
+        fclose($handler);
+        try{
+            $ch = curl_init($callbackUrl);
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($response));
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Disable SSL verification
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            $responseFromCallback = curl_exec($ch);
+            dd($responseFromCallback);
+        }catch(\Exception $x){
+            dd($x);
+        }
+        dd ('jeyyyy');
+
+// Process the response
+
+
+        $responseFromCallback = $response->getBody()->getContents();
+
 
         $ch = curl_init($callbackUrl);
         curl_setopt($ch, CURLOPT_POST, 1);
@@ -116,6 +140,9 @@ class CreateInvoicesJob implements ShouldQueue
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
         $responseFromCallback = curl_exec($ch);
+        $handler = fopen("callbackure" . date('d-m-Y') . ".txt", "a");
+        fwrite($handler,$callbackUrl);
+        fclose($handler);
 
 // Check for errors or process the response as needed
         if (curl_errno($ch)) {
