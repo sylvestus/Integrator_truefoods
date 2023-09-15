@@ -82,7 +82,9 @@ class CreateInvoicesJob implements ShouldQueue
 
                         if ($send_request['statusCode'] != 200) {
                             $data = $send_request['message'];
-                            $failed_invoices [] = ['invoice_number'=>$invoice_number,'message'=>$data];
+
+                            $message = json_decode($data->error->message)->message;
+                            $failed_invoices [] = ['invoice_number'=>$invoice_number,'message'=>$message];
 
                         } else {
                             $created_invoices[] = $invoice_number;
