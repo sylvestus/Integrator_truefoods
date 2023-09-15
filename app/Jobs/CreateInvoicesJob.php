@@ -64,13 +64,13 @@ class CreateInvoicesJob implements ShouldQueue
             $failed_invoices = [];
             $failed_message = [];
             foreach ($data['invoice'] as $data_return){
-                $invoice_number = $data_return['invoice_number'];
+                $invoice_number = isset($data_return['invoice_number']) ? $data_return['invoice_number'] : "Missing Invoice Number";
                 //dd($invoice_number);
                 try{
                     $invoice = $this->saritInvoiceController->findInvoice($company_id,$environment,$invoice_number);
 
                     if(!$invoice['message']){
-                        $failed_invoices [] = ['invoice_number'=>$invoice_number,'message'=>'Something is wrong with this invoice number'];
+                        $failed_invoices [] = ['invoice_number'=>$invoice_number,'message'=>'Check Invoice Number Value / Property on the Payload'];
                     }elseif($invoice['message']->count > 0){
                         $existing_invoices [] =  $invoice_number;
                     } else {
@@ -111,8 +111,6 @@ class CreateInvoicesJob implements ShouldQueue
         //create a call to callback ul and return the response
 
         $callbackUrl = $this->requestData['callback_url'];
-        //dd($callbackUrl);
-        //$handler = fopen("callbackurl" . date('d-m-Y') . ".txt", "a");
 
         try{
             $ch = curl_init($callbackUrl);

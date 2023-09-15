@@ -65,15 +65,15 @@ class CreateRedemptionsJob implements ShouldQueue
             }
 
             foreach ($data['redemption'] as $data_return){
-                $redemption_number = $data_return['redemption_number'];
-                $lms_no = $data_return['lms_no'];
+                $redemption_number = isset($data_return['redemption_number']) ? $data_return['redemption_number'] : "Missing Redemption Number";
+                $lms_no = isset($data_return['lms_no']) ? $data_return['lms_no'] : "  ";
 
                 try{
                     $redemption = $this->saritRedemptionsController->findRedemption($company_id,$environment,$redemption_number,$lms_no);
                     // dd($redemption);
                     if(!$redemption['message']){
 
-                        $failed_redemptions [] = ['redemption_number'=>$redemption_number,'message'=>'Something is wrong with this redemption number or lms No'];
+                        $failed_redemptions [] = ['redemption_number'=>$redemption_number,'message'=>'Check Redemption or LMS NO provided on the Payload'];
                     }elseif($redemption['statusCode'] == 202) {
                         $existing_redemptions [] =  $redemption_number;
 
@@ -86,7 +86,8 @@ class CreateRedemptionsJob implements ShouldQueue
 
                         if ($send_request['statusCode'] != 200) {
                             $data = $send_request['message'];
-                            $failed_redemptions [] = ['redemption_number'=>$redemption_number,'message'=>$data];
+                            $message = json_decode($data->error->message)->message;
+                            $failed_redemptions [] = ['redemption_number'=>$redemption_number,'message'=>$message];
 
                         } else {
                             $created_redemptions[] = $redemption_number;
@@ -110,8 +111,17 @@ class CreateRedemptionsJob implements ShouldQueue
         fwrite($handler,json_encode($response));
         fclose($handler);
         //create a call to callback ul and return the response
-
         $callbackUrl = $this->requestData['callback_url'];
-        Http::post($callbackUrl, $response);
+        $ch = curl_init($callbackUrl);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($response));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Disable SSL verification
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $responseFromCallback = curl_exec($ch);
+        curl_close($ch);
+
+
+        //Http::post($callbackUrl, $response);
     }
 }
