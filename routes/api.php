@@ -69,6 +69,8 @@ Route::middleware('auth:api')->group(function () {
     Route::post('get/uom_type',[\App\Http\Controllers\UomTypesGetController::class, 'getUomTypes']);
     //Location Qty
     Route::post('get/location_qty',[\App\Http\Controllers\LocationQtyController::class, 'getLocationQty']);
+
+    Route::post('get/location_qty-specific-items',[\App\Http\Controllers\LocationQtyController::class, 'getLocationQtySpecificItems']);
     //Customers  Data
     Route::post('get/customers',[\App\Http\Controllers\CustomerGetController::class, 'getCustomers']);
     Route::post('get/customer_class',[\App\Http\Controllers\CustomerGetController::class, 'getCustomerClass']);
