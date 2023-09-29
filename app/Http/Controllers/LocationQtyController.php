@@ -71,6 +71,7 @@ class LocationQtyController extends Controller
             $environment = $request->environment;
             $items = $request->itemIds;
             $itemIds = ['itemIds'=>$items];
+            return $itemIds;
             /*$rep_id  = $request->rep_id;
             $customer_id  = $request->customer_id;
             $start_date  = $request->start_date;
