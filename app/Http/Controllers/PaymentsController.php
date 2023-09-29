@@ -26,55 +26,83 @@ class PaymentsController extends Controller
 
     public function postPayments(Request $request){
         try{
-
+           // return $request;
             $company_id = $request->company_id;
             $environment = $request->environment;
-            //return ($company_id);
 
             $company_data = CompanyMaster::where('id', $company_id)->first();
-            // dd($company_id);
             if($environment == 'sandbox'){
                 $account_number = $company_data->account_number.'-sb1';
             }else{
                 $account_number = $company_data->account_number;
             }
-            $url = "https://7569482-sb1.suitetalk.api.netsuite.com/services/rest/record/v1/customerPayment";
-            $method = "POST";
             $received_data = $request->receipt;
-            // return ($received_data);
-            if($received_data != ''){
-                $orders_created = [];
-                $not_created =[];
-                foreach ($received_data as $key=>$receipt){
-                    $formatted_order = $this->generate_payload_for_netsuite($receipt,$request);
-                    //return $formatted_order['message'];
-                    if($formatted_order['status'] == 300 || $formatted_order['status'] ==202){
-                        $not_created[$key]['receipt_number'] = $receipt['receipt_number'];
-                        $not_created[$key]['message']= $formatted_order['message'];
-                    }elseif($formatted_order['status'] ==202){
-                        $not_created[$key]['receipt_number'] = $receipt['receipt_number'];
-                        $not_created[$key]['message']= $formatted_order['message'];
-                    }else{
-                        $data = json_encode($formatted_order['message']);
-                        $response = $this->netsuite_connector->callRestApi($url,$method,$data,$company_data,$environment);
-                        //dd($response);
-                        if($response['statusCode'] != 200){
-                            $not_created[$key]['receipt_number']= $receipt['receipt_number'];
-                            $not_created[$key]['message']= $response['message'];
-                            return response()->json(['statusCode'=>300,'message'=>$response['message']]);
-                        }else{
-                            $orders_created[] =$receipt['receipt_number'];
-                            return response()->json(['statusCode'=>200,'message'=>$response['message']]);
+
+            foreach ($received_data as $payment){
+                $paymentExists = $this->findPayment($company_id, $environment, $payment['receipt_number']);
+                if ($paymentExists['message']->count > 0) {
+                    return ['statusCode' => 200, 'response' => 'Record Exists', 'message' => 'Payment Record Already Exists'];
+                }else{
+                    $invoiceController =  new InvoiceController();
+                    $exists = $invoiceController->findInvoice($company_id, $environment, $payment['sale_number']);
+                    if ($exists['message']->count > 0) {//if exists allow payment processing
+                        $url = "https://" . $account_number . ".restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=customscript_create_payment_from_pos&deploy=customdeploy_create_payment_from_pos";
+                        $method = "POST";
+                        $data = "";
+                        $data = json_encode($payment);
+                        //return $url;
+                        $send_request = $this->netsuite_connector->callRestApi($url, $method, $data, $company_data, $environment);
+                        // return ($send_request);
+                        if ($send_request['statusCode'] != 200) {
+                            return $send_request;
+                        } else {
+                            $data = $send_request['message'];
+
+                            if($data->success){
+                                return ['statusCode' => 200, 'response' => 'success', 'message' => $data];
+                            }else{
+                                return ['statusCode' => 300, 'response' => 'error', 'message' => $data];
+                            }
                         }
+                    }else{
+                        return response()->json(['statusCode'=>500,'response '=>'Payment Not Created','message'=>'Invoice Data Missing']);
                     }
                 }
-                return response()->json(['statusCode'=>200,'message'=>'Payment created','created_receipt '=>($orders_created),'receipt_not_created'=>($not_created)]);
+
             }
-            return response()->json(['statusCode'=>404,'response '=>"Receipt data missing",'message'=>'Add at least one receipt and try again']);
+
 
         } catch (\Exception $ex) {
             return response()->json(['statusCode' => 300, 'response' => 'Something went wrong',
                 'message' => 'Error: '.$ex->getMessage().' File: '.$ex->getFile().' Line: '.$ex->getLine()]);
+        }
+    }
+
+    public function findPayment($company_id, $environment, $order_number)
+    {
+        try {
+            $company_data = CompanyMaster::where('id', $company_id)->first();
+            if ($environment == 'sandbox') {
+                $account_number = $company_data->account_number . '-sb1';
+            } else {
+                $account_number = $company_data->account_number;
+            }
+
+            $url = "https://" . $account_number . ".suitetalk.api.netsuite.com/services/rest/record/v1/customerPayment?q=custbody_nn_pa_posno+CONTAIN+" .$order_number;
+            // return $url;
+            $method = "GET";
+            $data = "";
+            $data = json_decode($data);
+            $response = $this->netsuite_connector->callRestApi($url, $method, $data, $company_data, $environment);
+            if ($response['statusCode'] != 200) {
+                return $response;
+            } else {
+                $data = $response['message'];
+                return ['statusCode' => 200, 'response' => 'Success', 'message' => $data];
+            }
+        } catch (\Exception $ex) {
+            return response()->json(['statusCode' => 300, 'response' => 'Something went wrong',
+                'message' => 'Error: ' . $ex->getMessage() . ' File: ' . $ex->getFile() . ' Line: ' . $ex->getLine()]);
         }
     }
 
@@ -138,32 +166,7 @@ class PaymentsController extends Controller
         }
 
     }
-    public function findPayment($company_id,$environment,$order_number){
-        try {
-            $company_data = CompanyMaster::where('id', $company_id)->first();
-            if($environment == 'sandbox'){
-                $account_number = $company_data->account_number.'-sb1';
-            }else{
-                $account_number = $company_data->account_number;
-            }
 
-            $url = "https://".$account_number .".suitetalk.api.netsuite.com/services/rest/record/v1/invoice?q=custbody_nn_pa_posno+CONTAIN+".$order_number;
-            // return $url;
-            $method = "GET";
-            $data = "";
-            $data = json_decode($data);
-            $response = $this->netsuite_connector->callRestApi($url,$method,$data,$company_data,$environment);
-            if($response['statusCode'] != 200){
-                return $response;
-            }else{
-                $data  = $response['message'];
-                return ['statusCode'=>200,'response'=>'Success','message'=>$data];
-            }
-        } catch (\Exception $ex) {
-            return response()->json(['statusCode' => 300, 'response' => 'Something went wrong',
-                'message' => 'Error: '.$ex->getMessage().' File: '.$ex->getFile().' Line: '.$ex->getLine()]);
-        }
-    }
 
     public function searchPayments(Request $request)
     {

@@ -134,7 +134,7 @@ class InvoiceController extends Controller
                 $account_number = $company_data->account_number;
             }
 
-            $url = "https://" . $account_number . ".suitetalk.api.netsuite.com/services/rest/record/v1/invoice?q=custbody_nn_pa_posno+CONTAIN+" .   $order_number;
+            $url = "https://" . $account_number . ".suitetalk.api.netsuite.com/services/rest/record/v1/invoice?q=custbody_nn_pa_posno+CONTAIN+" .$order_number;
             // return $url;
             $method = "GET";
             $data = "";
