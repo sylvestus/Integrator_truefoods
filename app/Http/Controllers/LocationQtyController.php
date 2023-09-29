@@ -88,6 +88,7 @@ class LocationQtyController extends Controller
             $method = "POST";
             $data = json_encode($itemIds);
             $send_request = $this->netsuite_connector->callRestApi($url, $method, $data, $company_data, $environment);
+            return $send_request;
 
             if ($send_request['statusCode'] != 200) {
                 return $send_request;
