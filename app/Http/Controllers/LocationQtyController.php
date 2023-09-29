@@ -49,8 +49,6 @@ class LocationQtyController extends Controller
             $data = "";
             $data = json_decode($data);
 
-
-
             $send_request = $this->netsuite_connector->callRestApi($url, $method, $data, $company_data, $environment);
             if ($send_request['statusCode'] != 200) {
                 return $send_request;
@@ -71,7 +69,7 @@ class LocationQtyController extends Controller
             $environment = $request->environment;
             $items = $request->itemIds;
             $itemIds = ['itemIds'=>$items];
-            return $itemIds;
+            //return $itemIds;
             /*$rep_id  = $request->rep_id;
             $customer_id  = $request->customer_id;
             $start_date  = $request->start_date;
@@ -95,7 +93,7 @@ class LocationQtyController extends Controller
                 return $send_request;
             } else {
                 $data = $send_request['message'];
-                return $data;
+                //return $data;
                 if($data->success){
                     return ['statusCode' => 200, 'response' => 'Success', 'message' => $data];
                 }else{
