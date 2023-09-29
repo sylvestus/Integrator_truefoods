@@ -94,6 +94,7 @@ class LocationQtyController extends Controller
                 return $send_request;
             } else {
                 $data = $send_request['message'];
+                return $data;
                 if($data->success){
                     return ['statusCode' => 200, 'response' => 'Success', 'message' => $data];
                 }else{
