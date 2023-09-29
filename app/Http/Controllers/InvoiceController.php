@@ -354,10 +354,10 @@ class InvoiceController extends Controller
             }
 
             $invoice_number = $data_return['invoice_number'];
-            //$invoice = $this->findInvoice($company_id,$environment,$invoice_number);
-            $invoice['message'] = false;
+            $invoice = $this->findInvoice($company_id,$environment,$invoice_number);
+            //$invoice['message'] = false;
 
-            if($invoice['message']){
+            if($invoice['message']->count>0){
                 return ['statusCode'=>200,'message'=>'Invoice exists in netsuite'];
             } else {
                 $url = "https://" . $account_number . ".restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=customscript_create_invoice&deploy=customdeploy_create_invoice&invoice_date=" . $invoice_date . "&invoice_number=" . $invoice_number . "&discount_amount=" . $discount_amount;
