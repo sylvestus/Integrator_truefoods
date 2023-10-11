@@ -89,7 +89,7 @@ class IBLEFTController extends Controller
         file_put_contents($file_path, $file_contents);
         $command = "C:\MCBCheckSum\ConsoleLnHashCheckSum.exe $file_path";
         $checksum = shell_exec($command);
-        $sendToSFTP = sendChecksumToSFTP($checksum,$file_name);
+        $sendToSFTP = $this->sendChecksumToSFTP($checksum,$file_name);
 
         return $sendToSFTP;
     }
