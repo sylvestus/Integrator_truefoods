@@ -46,7 +46,7 @@ class IBLEFTController extends Controller
         }
 
         // Create and write the file
-        $file_path = $directory . $file_name.'.txt';
+        $file_path = './eft/'. $file_name.'.txt';
         file_put_contents($file_path, $file_contents);
 
 
