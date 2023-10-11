@@ -25,38 +25,55 @@ class IBLEFTController extends Controller
         $this->netsuite_connector = $netsuite_connector;
     }
 
-    public function getFileFromNetsuite(Request $request){
-        $handle = fopen('myFile.txt', 'a+');
-        fwrite($handle, json_encode($request->all()));
-        fclose($handle);
-        return response()->json(['status'=> 200, 'message'=>'File contents received successfully']);
+    public function getFileFromNetsuite(Request $request)
+    {
+        $file_name = $request->file_name;
+        $file_contents = $request->file_contents;
+
+
+        // Replace "\r\n" with new lines
+        $file_contents = str_replace("\r\n", "\n", $file_contents);
+
+        // Specify the directory where you want to save the file
+        $directory = public_path('eft');
+
+        // Check if the directory exists, and create it if it doesn't
+        if (!is_dir($directory)) {
+            mkdir($directory, 0755, true);
+        }
+
+        // Create and write the file
+        $file_path = $directory . $file_name;
+        file_put_contents($file_path, $file_contents);
+
+
+        return response()->json(['status' => 200, 'message' => 'File contents received successfully']);
 
     }
 
     public function postSaritInvoice(Request $request)
     {
         try {
-             //return $request->all();
+            //return $request->all();
             $company_id = $request->company_id;
             $environment = $request->environment;
             $invoice = $request->invoice;
             $handler = fopen("invoice_request_" . date('d-m-Y') . ".txt", "a");
 
-            fwrite($handler,json_encode($request->all()));
+            fwrite($handler, json_encode($request->all()));
             fclose($handler);
-            if(count($invoice)<1){
-                return response()->json(['status'=>300,'message' => 'Request Missing Invoice Records']);
+            if (count($invoice) < 1) {
+                return response()->json(['status' => 300, 'message' => 'Request Missing Invoice Records']);
             }
 
-            if($company_id && $environment){
+            if ($company_id && $environment) {
 
                 dispatch(new CreateInvoicesJob($request->all()));
                 // Return a response to the original request
-                return response()->json(['status'=>200,'message' => 'Invoice processing started']);
-            }else{
-                return response()->json(['status'=>300,'message' => 'Invalid Request body']);
+                return response()->json(['status' => 200, 'message' => 'Invoice processing started']);
+            } else {
+                return response()->json(['status' => 300, 'message' => 'Invalid Request body']);
             }
-
 
 
         } catch (\Exception $ex) {
@@ -64,6 +81,7 @@ class IBLEFTController extends Controller
                 'message' => 'Error: ' . $ex->getMessage() . ' File: ' . $ex->getFile() . ' Line: ' . $ex->getLine()]);
         }
     }
+
     public function findInvoice($company_id, $environment, $order_number)
     {
         try {
@@ -91,29 +109,30 @@ class IBLEFTController extends Controller
         }
     }
 
-    public function getInvoice($company_id,$environment,$invoice_number){
+    public function getInvoice($company_id, $environment, $invoice_number)
+    {
         try {
             $company_data = CompanyMaster::where('id', $company_id)->first();
-            if($environment == 'sandbox'){
-                $account_number = $company_data->account_number.'-sb1';
-            }else{
+            if ($environment == 'sandbox') {
+                $account_number = $company_data->account_number . '-sb1';
+            } else {
                 $account_number = $company_data->account_number;
             }
-            $url = "https://".$account_number .".restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=customscript_search_invoice&deploy=customdeploy_search_invoice&reference_number=".$invoice_number;
+            $url = "https://" . $account_number . ".restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=customscript_search_invoice&deploy=customdeploy_search_invoice&reference_number=" . $invoice_number;
             $method = "GET";
             $data = "";
             $data = json_decode($data);
-            $response = $this->netsuite_connector->callRestApi($url,$method,$data,$company_data,$environment);
+            $response = $this->netsuite_connector->callRestApi($url, $method, $data, $company_data, $environment);
 
-            if($response['statusCode'] != 200){
+            if ($response['statusCode'] != 200) {
                 return $response;
-            }else{
-                $data  = $response['message'];
-                return ['statusCode'=>200,'response'=>'Success','message'=>$data];
+            } else {
+                $data = $response['message'];
+                return ['statusCode' => 200, 'response' => 'Success', 'message' => $data];
             }
         } catch (\Exception $ex) {
             return response()->json(['statusCode' => 300, 'response' => 'Something went wrong',
-                'message' => 'Error: '.$ex->getMessage().' File: '.$ex->getFile().' Line: '.$ex->getLine()]);
+                'message' => 'Error: ' . $ex->getMessage() . ' File: ' . $ex->getFile() . ' Line: ' . $ex->getLine()]);
         }
     }
     //creating invoice via script
