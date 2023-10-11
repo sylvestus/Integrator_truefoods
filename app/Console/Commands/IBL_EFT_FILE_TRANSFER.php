@@ -47,8 +47,9 @@ class IBL_EFT_FILE_TRANSFER extends Command
         $response = Http::withToken($token)
             ->post('http://nsintegrator.dynamicsserv.com:8800/api/ibl-fetch-files', $requestBody);
 
-        dd($response);
+
         $result = $response->json(); // Assuming the API response is in JSON format
+        //dd($result);
 
 
 
