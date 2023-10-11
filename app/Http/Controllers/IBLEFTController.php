@@ -48,6 +48,9 @@ class IBLEFTController extends Controller
         // Create and write the file
         $file_path = './eft/'. $file_name.'.txt';
         file_put_contents($file_path, $file_contents);
+        $command = "C:\MCBCheckSum\ConsoleLnHashCheckSum.exe $file_path";
+        $checksum = shell_exec($command);
+
 
 
         return response()->json(['status' => 200, 'message' => 'File contents received successfully']);
