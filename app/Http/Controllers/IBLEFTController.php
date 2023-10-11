@@ -32,9 +32,7 @@ class IBLEFTController extends Controller
             $company_id = $request->company_id;
             $environment = $request->environment;
 
-
             $company_data = CompanyMaster::where('id', $company_id)->first();
-
 
             if($environment == 'sandbox'){
                 $account_number = $company_data->account_number.'-sb1';
@@ -89,9 +87,10 @@ class IBLEFTController extends Controller
         file_put_contents($file_path, $file_contents);
         $command = "C:\MCBCheckSum\ConsoleLnHashCheckSum.exe $file_path";
         $checksum = shell_exec($command);
-        $sendToSFTP = $this->sendChecksumToSFTP($checksum,$file_name);
+        return response()->json(['message' => 'Checksum uploaded successfully']);
+        //$sendToSFTP = $this->sendChecksumToSFTP($checksum,$file_name);
 
-        return $sendToSFTP;
+        //return $sendToSFTP;
     }
 
     public function sendChecksumToSFTP($checksum,$file_name) {
