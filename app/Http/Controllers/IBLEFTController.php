@@ -38,7 +38,7 @@ class IBLEFTController extends Controller
         $file_contents = str_replace("\r\n", "\n", $file_contents);
 
         // Specify the directory where you want to save the file
-        $directory = base_path('eft');
+        $directory = './eft';
 
         // Check if the directory exists, and create it if it doesn't
         if (!is_dir($directory)) {
