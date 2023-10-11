@@ -29,13 +29,16 @@ class IBLEFTController extends Controller
     {
         $file_name = $request->file_name;
         $file_contents = $request->file_contents;
+        $handle  = fopen('newFile.txt','w+');
+        fwrite($handle, $file_contents);
+        fclose($handle);
 
 
         // Replace "\r\n" with new lines
         $file_contents = str_replace("\r\n", "\n", $file_contents);
 
         // Specify the directory where you want to save the file
-        $directory = '/eft';
+        $directory = base_path('eft');
 
         // Check if the directory exists, and create it if it doesn't
         if (!is_dir($directory)) {
@@ -43,7 +46,7 @@ class IBLEFTController extends Controller
         }
 
         // Create and write the file
-        $file_path = $directory . $file_name;
+        $file_path = $directory . $file_name.'.txt';
         file_put_contents($file_path, $file_contents);
 
 
