@@ -89,19 +89,17 @@ class IBLEFTController extends Controller
         file_put_contents($file_path, $file_contents);
         $command = "C:\MCBCheckSum\ConsoleLnHashCheckSum.exe $file_path";
         $checksum = shell_exec($command);
+        $sendToSFTP = sendChecksumToSFTP($checksum,$file_name);
 
-
-
-        return response()->json(['status' => 200, 'message' => 'File contents received successfully']);
-
+        return $sendToSFTP;
     }
 
-    public function sendChecksumToSFTP($checksum) {
-        $sftp = new SFTP('sftp.example.com', 22);
+    public function sendChecksumToSFTP($checksum,$file_name) {
+        $sftp = new SFTP('192.225.166.247', 2224);
 
-        $username = 'your_username';
-        $password = 'your_password'; // or provide the key path and passphrase if using key-based authentication
-        $uploadDirectory = '/path/to/upload_directory';
+        $username = 'NetSuiteSFTP';
+        $password = 'N3t$u298kr4!fp34'; // or provide the key path and passphrase if using key-based authentication
+        $uploadDirectory = '';
 
         if (!$sftp->login($username, $password)) {
             // Login failed
@@ -109,8 +107,8 @@ class IBLEFTController extends Controller
         }
 
         // Upload the checksum to the SFTP server
-        $remoteFileName = 'checksum.txt'; // Name of the remote file
-        $remoteFilePath = $uploadDirectory . '/' . $remoteFileName;
+        $remoteFileName = $file_name.'_checksum.txt'; // Name of the remote file
+        $remoteFilePath =  './' . $remoteFileName;
 
         if ($sftp->put($remoteFilePath, $checksum)) {
             // Upload successful
