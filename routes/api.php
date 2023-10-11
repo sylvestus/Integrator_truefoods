@@ -19,6 +19,7 @@ use  App\Http\Controllers\PostController;
 
 Route::post('test-connection', [\App\Http\Controllers\CallbackController::class, 'testConnection']);
 Route::post('ibl-get-files', [\App\Http\Controllers\IBLEFTController::class, 'getFileFromNetsuite']);
+Route::post('ibl-fetch-files', [\App\Http\Controllers\IBLEFTController::class, 'getFiles']);
 Route::post('register', [PassportAuthController::class, 'register']);
 Route::post('login', [PassportAuthController::class, 'login']);
 Route::post('callback', [\App\Http\Controllers\CallbackController::class, 'handleCallback']);

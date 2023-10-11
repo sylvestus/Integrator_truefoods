@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Jobs\CreateInvoicesJob;
 use App\Models\CompanyMaster;
 use Illuminate\Http\Request;
+use phpseclib3\Net\SFTP;
 use PHPUnit\Exception;
 
 class IBLEFTController extends Controller
@@ -23,6 +24,44 @@ class IBLEFTController extends Controller
         $netsuite_connector = new NetsuiteConnectorController();
 
         $this->netsuite_connector = $netsuite_connector;
+    }
+
+    public function getFiles(Request $request)
+    {
+        try {
+            $company_id = $request->company_id;
+            $environment = $request->environment;
+
+
+            $company_data = CompanyMaster::where('id', $company_id)->first();
+
+
+            if($environment == 'sandbox'){
+                $account_number = $company_data->account_number.'-sb1';
+            }else{
+                $account_number = $company_data->account_number;
+            }
+
+            $url = "https://".$account_number.".restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=customscript_restlet_export_eft&deploy=customdeploy_export_eft";
+
+            $method = "GET";
+            $data = "";
+            $data = json_decode($data);
+
+
+
+            $send_request = $this->netsuite_connector->callRestApi($url, $method, $data, $company_data, $environment);
+            if ($send_request['statusCode'] != 200) {
+                return $send_request;
+            } else {
+                $data = $send_request['message'];
+                return ['statusCode' => 200, 'response' => 'Success', 'message' => $data];
+            }
+
+        } catch (\Exception $ex) {
+            return response()->json(['statusCode' => 300, 'response' => 'Something went wrong',
+                'message' => 'Error: ' . $ex->getMessage() . ' File: ' . $ex->getFile() . ' Line: ' . $ex->getLine()]);
+        }
     }
 
     public function getFileFromNetsuite(Request $request)
@@ -57,91 +96,28 @@ class IBLEFTController extends Controller
 
     }
 
-    public function postSaritInvoice(Request $request)
-    {
-        try {
-            //return $request->all();
-            $company_id = $request->company_id;
-            $environment = $request->environment;
-            $invoice = $request->invoice;
-            $handler = fopen("invoice_request_" . date('d-m-Y') . ".txt", "a");
+    public function sendChecksumToSFTP($checksum) {
+        $sftp = new SFTP('sftp.example.com', 22);
 
-            fwrite($handler, json_encode($request->all()));
-            fclose($handler);
-            if (count($invoice) < 1) {
-                return response()->json(['status' => 300, 'message' => 'Request Missing Invoice Records']);
-            }
+        $username = 'your_username';
+        $password = 'your_password'; // or provide the key path and passphrase if using key-based authentication
+        $uploadDirectory = '/path/to/upload_directory';
 
-            if ($company_id && $environment) {
+        if (!$sftp->login($username, $password)) {
+            // Login failed
+            return response()->json(['message' => 'SFTP login failed']);
+        }
 
-                dispatch(new CreateInvoicesJob($request->all()));
-                // Return a response to the original request
-                return response()->json(['status' => 200, 'message' => 'Invoice processing started']);
-            } else {
-                return response()->json(['status' => 300, 'message' => 'Invalid Request body']);
-            }
+        // Upload the checksum to the SFTP server
+        $remoteFileName = 'checksum.txt'; // Name of the remote file
+        $remoteFilePath = $uploadDirectory . '/' . $remoteFileName;
 
-
-        } catch (\Exception $ex) {
-            return response()->json(['statusCode' => 300, 'response' => 'Something went wrong',
-                'message' => 'Error: ' . $ex->getMessage() . ' File: ' . $ex->getFile() . ' Line: ' . $ex->getLine()]);
+        if ($sftp->put($remoteFilePath, $checksum)) {
+            // Upload successful
+            return response()->json(['message' => 'Checksum uploaded successfully']);
+        } else {
+            // Upload failed
+            return response()->json(['message' => 'Checksum upload failed']);
         }
     }
-
-    public function findInvoice($company_id, $environment, $order_number)
-    {
-        try {
-            $company_data = CompanyMaster::where('id', $company_id)->first();
-            if ($environment == 'sandbox') {
-                $account_number = $company_data->account_number . '-sb1';
-            } else {
-                $account_number = $company_data->account_number;
-            }
-
-            $url = "https://" . $account_number . ".suitetalk.api.netsuite.com/services/rest/record/v1/invoice?q=custbody_lms+CONTAIN+" . $order_number;
-            $method = "GET";
-            $data = "";
-            $data = json_decode($data);
-            $response = $this->netsuite_connector->callRestApi($url, $method, $data, $company_data, $environment);
-            if ($response['statusCode'] != 200) {
-                return $response;
-            } else {
-                $data = $response['message'];
-                return ['statusCode' => 200, 'response' => 'Success', 'message' => $data];
-            }
-        } catch (\Exception $ex) {
-            return response()->json(['statusCode' => 300, 'response' => 'Something went wrong',
-                'message' => 'Error: ' . $ex->getMessage() . ' File: ' . $ex->getFile() . ' Line: ' . $ex->getLine()]);
-        }
-    }
-
-    public function getInvoice($company_id, $environment, $invoice_number)
-    {
-        try {
-            $company_data = CompanyMaster::where('id', $company_id)->first();
-            if ($environment == 'sandbox') {
-                $account_number = $company_data->account_number . '-sb1';
-            } else {
-                $account_number = $company_data->account_number;
-            }
-            $url = "https://" . $account_number . ".restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=customscript_search_invoice&deploy=customdeploy_search_invoice&reference_number=" . $invoice_number;
-            $method = "GET";
-            $data = "";
-            $data = json_decode($data);
-            $response = $this->netsuite_connector->callRestApi($url, $method, $data, $company_data, $environment);
-
-            if ($response['statusCode'] != 200) {
-                return $response;
-            } else {
-                $data = $response['message'];
-                return ['statusCode' => 200, 'response' => 'Success', 'message' => $data];
-            }
-        } catch (\Exception $ex) {
-            return response()->json(['statusCode' => 300, 'response' => 'Something went wrong',
-                'message' => 'Error: ' . $ex->getMessage() . ' File: ' . $ex->getFile() . ' Line: ' . $ex->getLine()]);
-        }
-    }
-    //creating invoice via script
-
-
 }
