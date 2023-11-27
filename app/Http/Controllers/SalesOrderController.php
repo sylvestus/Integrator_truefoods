@@ -114,6 +114,7 @@ class SalesOrderController extends Controller
         try{
 
             $items_data = $oh['item'];
+
            // dd($items_data);
             if($items_data ==''){
                 return ['status'=>202,'message'=>'items missing'];
@@ -124,6 +125,8 @@ class SalesOrderController extends Controller
                 $item_id =$om['item_id'];
                 $items[$i]['item']          = ['id'=>$item_id];
                 $items[$i]['quantity']      = floatval($om['quantity']);
+               // $items[$i]['price']          = ['id'=>'-1'];
+               // $items[$i]['rate']          = $om['rate'];
                 $items[$i]['units']         = $om['uom_erp_id'];
             }
 
@@ -136,14 +139,12 @@ class SalesOrderController extends Controller
                 'custbody_orderbooker'      =>  $oh['created_by_erp_id'],
                 'custbody_comment'          =>  'Order From Integrator',
                 'tranDate'                  =>  date('Y-m-d\TH:i:s.00\Z',strtotime($oh['created_at'])),
-                'discountItem'              =>  '',
-                //'cseg_supplier'             =>  ['id'=>0],
                 'custbody_custname'         =>  $oh['customer_name'],
-                'discountAmount'            =>  $oh['discount_amount'],
-                'entity'                    =>  ['id'=>  $oh['customer_erp_id']],
                 'item'                      =>  (['items'=>  $items]),
+                'entity'                    =>  ['id'=>  $oh['customer_erp_id']],
                 'location'                  =>  (['id'=>  $oh['warehouse_erp_id']])
             );
+            dd($rqrd);
             return ['status'=>200,'message'=> $rqrd];
         }catch(Exception $ex){
               return ['status'=>300,'message'=>$ex->getMessage()];
