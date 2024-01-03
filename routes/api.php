@@ -105,6 +105,16 @@ Route::middleware('auth:api')->group(function () {
     //Redemption
     Route::post('sarit/post/redemptions',[\App\Http\Controllers\SaritIRedemptionController::class, 'postSaritRedemptions']);
 
-    //callback
+    //Sunculture
+    Route::post('create/customer',[\App\Http\Controllers\SuncultureController::class, 'createSCCustomer']);
+    Route::post('create/amt-customer-account',[\App\Http\Controllers\SuncultureController::class, 'createAMTCustomerAccount']);
+    Route::post('get/regions',[\App\Http\Controllers\SuncultureController::class, 'getRegions']);
+    Route::post('create/payment',[\App\Http\Controllers\SuncultureController::class, 'createPayment']);
+    Route::post('get/payments',[\App\Http\Controllers\SuncultureController::class, 'getPayments']);
+    Route::get('get/ns-accounts',[\App\Http\Controllers\SuncultureController::class, 'getNsAccount']);
+    Route::post('create/credit-note',[\App\Http\Controllers\SuncultureController::class, 'createCreditNote']);
+    Route::get('get/ns-items',[\App\Http\Controllers\SuncultureController::class, 'getItems']);
+    Route::get('get/ns-locations',[\App\Http\Controllers\SuncultureController::class, 'getLocations']);
+    Route::get('get/ns-item-location-qty',[\App\Http\Controllers\SuncultureController::class, 'getItemLocationQty']);
 
 });

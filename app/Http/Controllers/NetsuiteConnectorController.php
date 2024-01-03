@@ -29,7 +29,7 @@ class NetsuiteConnectorController extends Controller
             $company_master = $company_data;
             $account_number = $company_master->account_number;
 
-           // dd($company_master);
+            // dd($company_master);
             if($environment == 'sandbox'){
                 $account = $account_number.'_SB1';
                 $consumerKey = $company_master->staging_consumerKey;
@@ -74,7 +74,7 @@ class NetsuiteConnectorController extends Controller
                 .'oauth_version="' .rawurlencode($oauth_version) .'", '
                 .'oauth_signature="' .rawurlencode($signature) .'"';
 
-           // $header = 'Authorization: OAuth realm="7569482_SB1",oauth_consumer_key="15f24cfbd171c23df88897a9592d8a1938836f0bd24576e6a23e80b275bf8923",oauth_token="51bd5707e5c8e74efe810bcc362ec575e72a597bcdbd5681ea4a32d7ad527d15",oauth_signature_method="HMAC-SHA256",oauth_timestamp="1675842972",oauth_nonce="L1Z5cNUDg0c",oauth_version="1.0",oauth_signature="RpC%2F5asl3OyLbJQdaDXLsLNz0UbztpmYkphZdjOZoYw%3D"';
+            // $header = 'Authorization: OAuth realm="7569482_SB1",oauth_consumer_key="15f24cfbd171c23df88897a9592d8a1938836f0bd24576e6a23e80b275bf8923",oauth_token="51bd5707e5c8e74efe810bcc362ec575e72a597bcdbd5681ea4a32d7ad527d15",oauth_signature_method="HMAC-SHA256",oauth_timestamp="1675842972",oauth_nonce="L1Z5cNUDg0c",oauth_version="1.0",oauth_signature="RpC%2F5asl3OyLbJQdaDXLsLNz0UbztpmYkphZdjOZoYw%3D"';
 
 
             return  $this->callCurl($header,$url,$data,$method);
@@ -87,7 +87,7 @@ class NetsuiteConnectorController extends Controller
 
     public function callCurl($header,$url,$data,$method){
         try{
-            //dd($url);
+
             $curl = curl_init();
             curl_setopt_array($curl, array(
                 CURLOPT_URL => $url,
@@ -108,10 +108,10 @@ class NetsuiteConnectorController extends Controller
                 ),
             ));
             $response = curl_exec($curl);
-            //dd($data);
 
 
             $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+            //
             curl_close($curl);
 
 

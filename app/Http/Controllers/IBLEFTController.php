@@ -40,8 +40,11 @@ class IBLEFTController extends Controller
                 $account_number = $company_data->account_number;
             }
 
-            $url = "https://".$account_number.".restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=customscript_restlet_export_eft&deploy=customdeploy_export_eft";
 
+           //$url = "https://".$account_number.".restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=customscript_jn_rs_create_customer_recor&deploy=customdeploy_jn_rs_create_customer_recor&start=0&end=1000";
+            //$url = "https://".$account_number.".restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=customscript_restlet_export_eft&deploy=customdeploy_export_eft";
+            $url = "https://".$account_number.".restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=customscript_jn_rs_create_customer_recor&deploy=customdeploy_jn_rs_create_customer_recor";
+           // return $url;
             $method = "GET";
             $data = "";
             $data = json_decode($data);
