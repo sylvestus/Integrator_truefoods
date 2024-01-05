@@ -20,7 +20,7 @@ use  App\Http\Controllers\PostController;
 Route::post('test-connection', [\App\Http\Controllers\CallbackController::class, 'testConnection']);
 Route::post('ibl-get-files', [\App\Http\Controllers\IBLEFTController::class, 'getFileFromNetsuite']);
 Route::post('ibl-fetch-files', [\App\Http\Controllers\IBLEFTController::class, 'getFiles']);
-Route::post('register', [PassportAuthController::class, 'register']);
+Route::post('register-users', [PassportAuthController::class, 'register']);
 Route::post('login', [PassportAuthController::class, 'login']);
 Route::post('callback', [\App\Http\Controllers\CallbackController::class, 'handleCallback']);
 Route::middleware('auth:api')->group(function () {
@@ -118,5 +118,9 @@ Route::middleware('auth:api')->group(function () {
     Route::get('get/ns-items',[\App\Http\Controllers\SuncultureController::class, 'getItems']);
     Route::get('get/ns-locations',[\App\Http\Controllers\SuncultureController::class, 'getLocations']);
     Route::get('get/ns-item-location-qty',[\App\Http\Controllers\SuncultureController::class, 'getItemLocationQty']);
+
+    //MONEy POINT
+    //Journal Entry
+    Route::post('moneypoint/post/journals',[\App\Http\Controllers\MoneyPointJournalEntryController::class, 'postMoneyPointJournalEntry']);
 
 });

@@ -12,6 +12,7 @@ class PassportAuthController extends Controller
     public function register(Request $request)
     {
        // return $request->all();
+        return  bcrypt($request->password);
       try{
           $this->validate($request, [
               'company_id' => 'required',
