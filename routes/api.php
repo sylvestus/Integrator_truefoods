@@ -104,6 +104,8 @@ Route::middleware('auth:api')->group(function () {
     Route::post('sarit/post/cashsales',[\App\Http\Controllers\SaritICashSalesController::class, 'postSaritCashSale']);
     //Redemption
     Route::post('sarit/post/redemptions',[\App\Http\Controllers\SaritIRedemptionController::class, 'postSaritRedemptions']);
+    //gift Voucher Redemption
+    Route::post('sarit/post/gift-voucher-redemptions',[\App\Http\Controllers\SaritIGiftVoucherRedemptionController::class, 'postSaritGiftVoucherRedemptions']);
 
     //Sunculture
     Route::post('create/customer',[\App\Http\Controllers\SuncultureController::class, 'createSCCustomer']);
