@@ -28,37 +28,30 @@ class TransferOrderController extends Controller
         try {
             $company_id = $request->company_id;
             $environment = $request->environment;
-            // $date = $request->date;
-            // $transferLocation = $request->TransferLocation;
-            // $transferDestination = $request->TransferDestination;
-            // $status = $request->Status;
-            // $incoterm = $request->Incoterm;
-           
+            
             $company_data = CompanyMaster::where('id', $company_id)->first();
             $data = $request->all();
+           // return $data['transfer_data'];
             
-            $data_return = $data['transfer'];
+            $data_return = $data['transfer_data'];
             if ($environment == 'sandbox') {
                 $account_number = $company_data->account_number . '-sb1';
             } else {
                 $account_number = $company_data->account_number;
             }
-
-            //$reference_number = $data_return['reference_number'];
-            $reference_number = $data['transfer'][0]['order_number'];
+            
+                $reference_number = $data_return['reference_number'];
+            //$reference_number = $data['transfer_data'][0]['reference_number'];
             
             $reference = $this->findTransfer($company_id,$environment,$reference_number);
-            //dd($reference);
             if($reference['message']->count>0){
                 return ['statusCode'=>200,'message'=>'Transfer exists in netsuite'];
             }else{
-                $url = "https://" . $account_number . ".restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=customscript_rs_create_transfer&deploy=customdeploy_rs_create_transfer";
-                //sdd($url);            
+                $url = "https://" . $account_number . ".restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=customscript_rs_create_transfer&deploy=customdeploy_rs_create_transfer";            
                 $method = "POST";
                 $data = json_encode($data_return);
             
                 $send_request = $this->netsuite_connector->callRestApi($url, $method, $data, $company_data, $environment);
-                //dd($send_request);
                 if ($send_request['statusCode'] != 200) {
                     return $send_request;
                 } else {

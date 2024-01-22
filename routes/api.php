@@ -35,9 +35,6 @@ Route::middleware('auth:api')->group(function () {
     Route::post('post/salesOrders',[\App\Http\Controllers\SalesOrderController::class, 'postSalesOrder']);
     Route::post('post/transform_sales_order',[\App\Http\Controllers\SalesOrderController::class, 'transformSalesOrder']);
 
-    //Transfer
-    Route::post('post/transfer', [\App\Http\Controllers\TransferOrderController::class, 'postTransfer']);
-
     //invoices
     Route::post('search/invoices',[\App\Http\Controllers\SalesOrderController::class, 'searchInvoices']);
     Route::post('get/invoices',[\App\Http\Controllers\InvoiceController::class, 'getInvoices']);
@@ -97,8 +94,14 @@ Route::middleware('auth:api')->group(function () {
     //deliveries
     Route::post('post/delivery',[\App\Http\Controllers\DeliveryController::class, 'postDelivery']);
 
-    //Returns
-    Route::post('post/returns',[\App\Http\Controllers\ReturnsController::class, 'postReturns']);
+     //Returns
+     Route::post('post/returns',[\App\Http\Controllers\ReturnsController::class, 'postReturns']);
+   
+    //by Vinnie for GLINK
+     //Transfer Order, Item Fulfillment, Item Receipt
+    Route::post('glink/post/transfer-order', [\App\Http\Controllers\TransferOrderController::class, 'postTransfer']);
+    Route::post('glink/post/item-fulfillment', [\App\Http\Controllers\DeliveryController::class, 'postTransferDelivery']);
+    Route::post('glink/post/item-receipt', [\App\Http\Controllers\ItemReceiptController::class, 'postItemReceipt']);
 
     //sarit city
     //invoices

@@ -24,6 +24,97 @@ class DeliveryController extends Controller
         $this->netsuite_connector = $netsuite_connector;
     }
 
+    public function postTransferDelivery(Request $request)
+    {
+        try{
+            $company_id = $request->company_id;
+            $environment = $request->environment;
+
+            $company_data = CompanyMaster::where('id', $company_id)->first();
+
+            $data = $request->all();
+
+            $delivery_data = $data['item_fulfillment'];
+            //return $delivery_data;
+            if($environment == 'sandbox'){
+                $account_number = $company_data->account_number.'-sb1';
+            }else{
+                $account_number = $company_data->account_number;
+            }
+
+            $url = "https://" . $account_number . ".restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=customscript_rl_transfer_order_dn&deploy=customdeploytransfer_order_delivery_note";
+            $method = "POST";
+            $data = json_encode($delivery_data);
+                
+            $send_request = $this->netsuite_connector->callRestApi($url, $method, $data, $company_data, $environment);
+            //dd($send_request);
+            
+            $reference_number = $delivery_data['fulfillment_reference_no'];
+            
+            $reference = $this->findTransferDelivery($company_id,$environment,$reference_number);
+            if($reference['message']->count>0){
+                return ['statusCode'=>200,'message'=>'Item Fulfillment exists in netsuite'];
+            }else{
+                $url = "https://" . $account_number . ".restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=customscript_create_item_fulfillment&deploy=customdeploy_create_item_fulfillment";                          
+                $method = "POST";
+                $data = json_encode($delivery_data);
+                
+                $send_request = $this->netsuite_connector->callRestApi($url, $method, $data, $company_data, $environment);
+                //dd($send_request);
+                
+                if ($send_request['statusCode'] != 200) {
+                    return $send_request;
+                } else {
+                    $data = $send_request['message'];
+                    
+                    if($data->success){
+                        return ['statusCode' => 200, 'response' => 'Success', 'message' => $data];
+                    }else{
+                        return ['statusCode' => 300, 'response' => 'Error', 'message' => $data];
+                    } 
+                }
+            }
+
+            // $url = "https://".$account_number .".suitetalk.api.netsuite.com/services/rest/record/v1/itemfulfillment";
+            // $method = "POST";
+            // $received_data = $request->delivery_note;
+            // dd($received_data);
+            
+        }
+        catch (\Exception $ex) {
+            return response()->json(['statusCode' => 300, 'response' => 'Something went wrong',
+                'message' => 'Error: '.$ex->getMessage().' File: '.$ex->getFile().' Line: '.$ex->getLine()]);
+        }
+    }
+
+    public function findTransferDelivery($company_id, $environment, $order_number)
+    {
+        try{
+            $company_data = CompanyMaster::where('id', $company_id)->first();
+            if ($environment == 'sandbox') {
+                $account_number = $company_data->account_number . '-sb1';
+            } else {
+                $account_number = $company_data->account_number;
+            }
+
+            $url = "https://" . $account_number . ".suitetalk.api.netsuite.com/services/rest/record/v1/itemfulfillment?q=custbody_nn_pa_posno+CONTAIN+" .$order_number;
+            $method = "GET";
+            $data = "";
+            $data = json_decode($data);
+            $response = $this->netsuite_connector->callRestApi($url, $method, $data, $company_data, $environment);
+            //dd($response);
+            if ($response['statusCode'] != 200) {
+                return $response;
+            } else {
+                $data = $response['message'];
+                return ['statusCode' => 200, 'response' => 'Success', 'message' => $data];
+            }
+        }catch (\Exception $ex) {
+            return response()->json(['statusCode' => 300, 'response' => 'Something went wrong',
+                'message' => 'Error: ' . $ex->getMessage() . ' File: ' . $ex->getFile() . ' Line: ' . $ex->getLine()]);;
+        }
+    }
+
     public function postDelivery(Request $request){
         try{
 
