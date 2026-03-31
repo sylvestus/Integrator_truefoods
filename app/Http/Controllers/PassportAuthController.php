@@ -24,7 +24,8 @@ class PassportAuthController extends Controller
               'company_id'=>$request->company_id,
               'name' => $request->name,
               'email' => $request->email,
-              'password' => bcrypt($request->password)
+              'password' => bcrypt($request->password),
+              'role_id' => $request->role_id ?? 1
           ]);
 
 
