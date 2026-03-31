@@ -28,6 +28,7 @@ Route::post('callback', [\App\Http\Controllers\CallbackController::class, 'handl
 Route::middleware('auth:api')->group(function () {
 
     // Truefoods - Sanifu API endpoints
+    
     Route::post('truefoods-sanifu/get/items', [\App\Http\Controllers\Sanifu\SanifuItemsController::class, 'getItems']);
     Route::post('truefoods-sanifu/get/customers', [\App\Http\Controllers\Sanifu\SanifuCustomersController::class, 'getCustomers']);
     Route::post('truefoods-sanifu/get/customer-purchases', [\App\Http\Controllers\Sanifu\SanifuCustomersController::class, 'getCustomerPurchases']);
