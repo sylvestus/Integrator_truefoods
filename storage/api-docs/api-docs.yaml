@@ -24,7 +24,7 @@ tags:
     description: Sales order management endpoints
 
 paths:
-  /login:
+  /api/login:
     post:
       tags:
         - Authentication
