@@ -1,0 +1,703 @@
+openapi: 3.0.3
+info:
+  title: Truefoods Sanifu API
+  description: |
+    API for Truefoods Sanifu integration with NetSuite.
+
+    This API provides endpoints for managing items, customers, customer purchases, and sales orders.
+  version: 1.0.0
+  contact:
+    name: API Support
+
+servers:
+  - url: https://netsuiteintegrator.dynamicsserv.com:4140/api/truefoods-sanifu
+    description: Production Server
+
+tags:
+  - name: Items
+    description: Item management endpoints
+  - name: Customers
+    description: Customer management endpoints
+  - name: Sales Orders
+    description: Sales order management endpoints
+
+paths:
+  /get/items:
+    post:
+      tags:
+        - Items
+      summary: Get Items
+      description: Retrieve a paginated list of items with optional filters
+      parameters:
+        - name: company_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          example: 6
+          description: Company identifier
+        - name: environment
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [sandbox, production]
+          example: sandbox
+          description: Environment type
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+          example: 1
+          description: Page number for pagination
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 50
+          example: 50
+          description: Number of items per page
+        - name: itemId
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by specific item ID
+        - name: displayName
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by item display name
+        - name: category
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by item category
+        - name: isInactive
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: false
+          description: Include inactive items
+        - name: includeLocations
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: false
+          description: Include location data in response
+        - name: includePricing
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: false
+          description: Include pricing data in response
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ItemsResponse'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+
+  /get/customers:
+    post:
+      tags:
+        - Customers
+      summary: Get Customers
+      description: Retrieve a paginated list of customers with optional filters
+      parameters:
+        - name: company_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          example: 6
+          description: Company identifier
+        - name: environment
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [sandbox, production]
+          example: sandbox
+          description: Environment type
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+          example: 1
+          description: Page number for pagination
+        - name: customerId
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by specific customer ID
+        - name: companyName
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by company name
+        - name: email
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by customer email
+        - name: phone
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by customer phone
+        - name: isInactive
+          in: query
+          required: false
+          schema:
+            type: boolean
+          description: Filter by inactive status
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomersResponse'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+
+  /get/customer-purchases:
+    post:
+      tags:
+        - Customers
+      summary: Get Customer Purchases
+      description: Retrieve purchase history for a specific customer
+      parameters:
+        - name: company_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          example: 6
+          description: Company identifier
+        - name: environment
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [sandbox, production]
+          example: sandbox
+          description: Environment type
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+          example: 1
+          description: Page number for pagination
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 20
+          example: 20
+          description: Number of records per page
+        - name: customerId
+          in: query
+          required: true
+          schema:
+            type: integer
+          example: 1378
+          description: Customer ID to retrieve purchases for
+        - name: transactionType
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [invoice, salesorder, cashsale, creditmemo, returnauthorization, estimate]
+          example: salesorder
+          description: Filter by transaction type
+        - name: dateFrom
+          in: query
+          required: false
+          schema:
+            type: string
+          example: "29/03/2026"
+          description: Start date filter (DD/MM/YYYY format)
+        - name: dateTo
+          in: query
+          required: false
+          schema:
+            type: string
+          example: "30/03/2026"
+          description: End date filter (DD/MM/YYYY format)
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerPurchasesResponse'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+
+  /create/sales-order:
+    post:
+      tags:
+        - Sales Orders
+      summary: Create Sales Order
+      description: Create a new sales order
+      parameters:
+        - name: company_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          example: 6
+          description: Company identifier
+        - name: environment
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [sandbox, production]
+          example: sandbox
+          description: Environment type
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSalesOrderRequest'
+            example:
+              company_id: 6
+              environment: sandbox
+              customerId: 1378
+              memo: "new"
+              tranDate: "2026-03-30"
+              dueDate: "2026-04-05"
+              shipDate: "2026-03-31"
+              otherRefNum: "PO-12345"
+              terms: 3
+              salesRep: 1307
+              department: 2
+              classId: 1
+              location: 5
+              salesType: 1
+              channel: 2
+              region: 3
+              widgetLink: "https://example.com/widget/123"
+              items:
+                - itemId: 355
+                  quantity: 2
+                  rate: 500
+                  amount: 1000
+                  description: "Burger"
+                  taxCode: 7
+                  location: 5
+      responses:
+        '200':
+          description: Sales order created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SalesOrderResponse'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+
+  /update/sales-order:
+    post:
+      tags:
+        - Sales Orders
+      summary: Update Sales Order
+      description: Update an existing sales order
+      parameters:
+        - name: company_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          example: 6
+          description: Company identifier
+        - name: environment
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [sandbox, production]
+          example: sandbox
+          description: Environment type
+        - name: orderId
+          in: query
+          required: true
+          schema:
+            type: integer
+          example: 3870177
+          description: Sales order ID to update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateSalesOrderRequest'
+            example:
+              memo: "Updated order"
+              tranDate: "2026-03-30"
+              dueDate: "2026-04-05"
+              shipDate: "2026-03-31"
+              otherRefNum: "PO-12345"
+              terms: 3
+              salesRep: 1307
+              department: 2
+              classId: 1
+              location: 5
+              salesType: 1
+              channel: 2
+              region: 3
+              items:
+                - line: 1
+                  quantity: 2
+                  rate: 500
+                  amount: 1000
+                  description: "Burger"
+                  taxCode: 7
+                  location: 5
+      responses:
+        '200':
+          description: Sales order updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SalesOrderResponse'
+        '400':
+          description: Bad request
+        '404':
+          description: Sales order not found
+        '500':
+          description: Internal server error
+
+components:
+  schemas:
+    ItemsResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Item'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    Item:
+      type: object
+      properties:
+        itemId:
+          type: integer
+          description: Unique item identifier
+        displayName:
+          type: string
+          description: Item display name
+        category:
+          type: string
+          description: Item category
+        isInactive:
+          type: boolean
+          description: Whether the item is inactive
+        locations:
+          type: array
+          items:
+            type: object
+          description: Item location data (if includeLocations is true)
+        pricing:
+          type: object
+          description: Item pricing data (if includePricing is true)
+
+    CustomersResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Customer'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    Customer:
+      type: object
+      properties:
+        customerId:
+          type: integer
+          description: Unique customer identifier
+        companyName:
+          type: string
+          description: Company name
+        email:
+          type: string
+          description: Customer email
+        phone:
+          type: string
+          description: Customer phone number
+        isInactive:
+          type: boolean
+          description: Whether the customer is inactive
+
+    CustomerPurchasesResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Purchase'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    Purchase:
+      type: object
+      properties:
+        transactionId:
+          type: integer
+          description: Transaction identifier
+        transactionType:
+          type: string
+          enum: [invoice, salesorder, cashsale, creditmemo, returnauthorization, estimate]
+        tranDate:
+          type: string
+          description: Transaction date
+        total:
+          type: number
+          description: Total amount
+
+    CreateSalesOrderRequest:
+      type: object
+      required:
+        - company_id
+        - environment
+        - customerId
+        - items
+      properties:
+        company_id:
+          type: integer
+          description: Company identifier
+        environment:
+          type: string
+          enum: [sandbox, production]
+          description: Environment type
+        customerId:
+          type: integer
+          description: Customer ID for the order
+        memo:
+          type: string
+          description: Order memo/notes
+        tranDate:
+          type: string
+          format: date
+          description: Transaction date (YYYY-MM-DD)
+        dueDate:
+          type: string
+          format: date
+          description: Due date (YYYY-MM-DD)
+        shipDate:
+          type: string
+          format: date
+          description: Ship date (YYYY-MM-DD)
+        otherRefNum:
+          type: string
+          description: External reference number (e.g., PO number)
+        terms:
+          type: integer
+          description: Payment terms ID
+        salesRep:
+          type: integer
+          description: Sales representative ID
+        department:
+          type: integer
+          description: Department ID
+        classId:
+          type: integer
+          description: Class ID
+        location:
+          type: integer
+          description: Location ID
+        salesType:
+          type: integer
+          description: Sales type ID
+        channel:
+          type: integer
+          description: Sales channel ID
+        region:
+          type: integer
+          description: Region ID
+        widgetLink:
+          type: string
+          description: Widget link URL
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/SalesOrderItem'
+          description: Line items for the order
+
+    UpdateSalesOrderRequest:
+      type: object
+      properties:
+        memo:
+          type: string
+          description: Order memo/notes
+        tranDate:
+          type: string
+          format: date
+          description: Transaction date (YYYY-MM-DD)
+        dueDate:
+          type: string
+          format: date
+          description: Due date (YYYY-MM-DD)
+        shipDate:
+          type: string
+          format: date
+          description: Ship date (YYYY-MM-DD)
+        otherRefNum:
+          type: string
+          description: External reference number (e.g., PO number)
+        terms:
+          type: integer
+          description: Payment terms ID
+        salesRep:
+          type: integer
+          description: Sales representative ID
+        department:
+          type: integer
+          description: Department ID
+        classId:
+          type: integer
+          description: Class ID
+        location:
+          type: integer
+          description: Location ID
+        salesType:
+          type: integer
+          description: Sales type ID
+        channel:
+          type: integer
+          description: Sales channel ID
+        region:
+          type: integer
+          description: Region ID
+        widgetLink:
+          type: string
+          description: Widget link URL
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/SalesOrderLineItem'
+          description: Line items to update
+
+    SalesOrderItem:
+      type: object
+      required:
+        - itemId
+        - quantity
+      properties:
+        itemId:
+          type: integer
+          description: Item ID
+        quantity:
+          type: integer
+          description: Quantity
+        rate:
+          type: number
+          description: Unit price
+        amount:
+          type: number
+          description: Line total amount
+        description:
+          type: string
+          description: Line item description
+        taxCode:
+          type: integer
+          description: Tax code ID
+        location:
+          type: integer
+          description: Item location ID
+
+    SalesOrderLineItem:
+      type: object
+      required:
+        - line
+      properties:
+        line:
+          type: integer
+          description: Line number to update
+        quantity:
+          type: integer
+          description: Quantity
+        rate:
+          type: number
+          description: Unit price
+        amount:
+          type: number
+          description: Line total amount
+        description:
+          type: string
+          description: Line item description
+        taxCode:
+          type: integer
+          description: Tax code ID
+        location:
+          type: integer
+          description: Item location ID
+
+    SalesOrderResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        orderId:
+          type: integer
+          description: Created/updated order ID
+        message:
+          type: string
+          description: Status message
+
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+          description: Current page number
+        pageSize:
+          type: integer
+          description: Items per page
+        totalRecords:
+          type: integer
+          description: Total number of records
+        totalPages:
+          type: integer
+          description: Total number of pages
