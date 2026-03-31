@@ -152,7 +152,8 @@ class SalesOrderController extends Controller
                 'orderstatus' => 'B',
                 'cseg_nn_branch' => ['id' => $oh['branch_id']],
                 'tranDate' => date('Y-m-d\TH:i:s.00\Z', strtotime($oh['created_at'])),
-                'item' => (['items' => $items])
+                'item' => (['items' => $items]),
+                'custbody_widget_link' => $oh['widget_link'] ?? null
                 //'location'                  =>  (['id'=>  $oh['warehouse_erp_id']])
             );
             return ['status' => 200, 'message' => $rqrd];

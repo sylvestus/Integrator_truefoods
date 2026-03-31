@@ -433,6 +433,9 @@ class SanifuCustomersController extends Controller
             if ($request->has('region')) {
                 $requestBody['region'] = $request->region;
             }
+            if ($request->has('widgetLink')) {
+                $requestBody['widgetLink'] = $request->widgetLink;
+            }
 
             $method = "POST";
             $data = json_encode($requestBody);
