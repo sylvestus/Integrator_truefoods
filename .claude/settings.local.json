@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(php artisan:*)",
+      "Bash(netstat:*)",
+      "Bash(net stop mysql)",
+      "Bash(net start mysql)",
+      "Bash(C:xamppmysql_stop.bat)",
+      "Bash(C:xamppmysql_start.bat)",
+      "Bash(dir \"C:\\xampp\\mysql\\data\\ib_logfile*\")"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
