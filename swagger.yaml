@@ -14,6 +14,8 @@ servers:
     description: Production Server
 
 tags:
+  - name: Authentication
+    description: User authentication endpoints
   - name: Items
     description: Item management endpoints
   - name: Customers
@@ -22,6 +24,31 @@ tags:
     description: Sales order management endpoints
 
 paths:
+  /login:
+    post:
+      tags:
+        - Authentication
+      summary: User Login
+      description: Authenticate user and get access token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+            example:
+              email: "admin@example.com"
+              password: "password123"
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '401':
+          description: Invalid credentials
+
   /get/items:
     post:
       tags:
@@ -701,3 +728,39 @@ components:
         totalPages:
           type: integer
           description: Total number of pages
+
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          description: User email address
+        password:
+          type: string
+          description: User password
+
+    LoginResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            company_id:
+              type: integer
+              description: Company ID
+            company_name:
+              type: string
+              description: Company name
+            user_id:
+              type: integer
+              description: User ID
+            user:
+              type: string
+              description: User name
+            token:
+              type: string
+              description: Access token for API authentication
