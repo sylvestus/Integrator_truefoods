@@ -138,6 +138,62 @@ paths:
         '500':
           description: Internal server error
 
+  /get/uom-conversion:
+    post:
+      tags:
+        - Items
+      summary: Get UOM Conversion
+      description: |
+        Get unit of measure conversion data.
+
+        Usage:
+        - No parameters: Get all unit types
+        - unitTypeId: Get all units for a specific unit type
+        - unitTypeId + unitName: Get conversion rate for a specific unit
+        - itemId: Get units from an item's unit type
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UomConversionRequest'
+            examples:
+              allUnitTypes:
+                summary: Get all unit types
+                value:
+                  company_id: 6
+                  environment: sandbox
+              unitTypeUnits:
+                summary: Get units for a unit type
+                value:
+                  company_id: 6
+                  environment: sandbox
+                  unitTypeId: "1"
+              specificUnit:
+                summary: Get specific unit conversion
+                value:
+                  company_id: 6
+                  environment: sandbox
+                  unitTypeId: "1"
+                  unitName: "CAN"
+              itemUnits:
+                summary: Get units from item
+                value:
+                  company_id: 6
+                  environment: sandbox
+                  itemId: "123"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UomConversionResponse'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+
   /get/customers:
     post:
       tags:
@@ -728,6 +784,69 @@ components:
         totalPages:
           type: integer
           description: Total number of pages
+
+    UomConversionRequest:
+      type: object
+      required:
+        - company_id
+        - environment
+      properties:
+        company_id:
+          type: integer
+          description: Company identifier
+        environment:
+          type: string
+          enum: [sandbox, production]
+          description: Environment type
+        unitTypeId:
+          type: string
+          description: Unit type internal ID
+        unitName:
+          type: string
+          description: Specific unit name to get conversion rate for
+        itemId:
+          type: string
+          description: Item internal ID to get its unit type
+
+    UomConversionResponse:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          example: 200
+        response:
+          type: string
+          example: Success
+        data:
+          type: object
+          properties:
+            success:
+              type: boolean
+            unitTypeId:
+              type: string
+            unitTypeName:
+              type: string
+            totalUnits:
+              type: integer
+            units:
+              type: array
+              items:
+                type: object
+                properties:
+                  internalId:
+                    type: string
+                  unitName:
+                    type: string
+                  abbreviation:
+                    type: string
+                  pluralName:
+                    type: string
+                  conversionRate:
+                    type: number
+                  itemsPerUnit:
+                    type: number
+                  isBaseUnit:
+                    type: boolean
 
     LoginRequest:
       type: object
