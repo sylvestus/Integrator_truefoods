@@ -144,4 +144,98 @@ class SanifuItemsController extends Controller
             ]);
         }
     }
+
+    /**
+     * Get UOM conversion data from NetSuite using ss_rl_uom_conversion RESTlet
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse|array
+     */
+    public function getUomConversion(Request $request)
+    {
+        try {
+            // Get request parameters
+            $company_id = $request->company_id;
+            $environment = $request->environment;
+
+            // Optional filter parameters
+            $unitTypeId = $request->unitTypeId ?? '';
+            $unitName = $request->unitName ?? '';
+            $itemId = $request->itemId ?? '';
+
+            // Get company data
+            $company_data = CompanyMaster::where('id', $company_id)->first();
+
+            if (!$company_data) {
+                return response()->json([
+                    'status' => 'error',
+                    'error_code' => '',
+                    'error_message' => 'Company not found'
+                ]);
+            }
+
+            // Determine account number based on environment
+            if ($environment == 'sandbox') {
+                $account_number = $company_data->account_number . '-sb1';
+            } else {
+                $account_number = $company_data->account_number;
+            }
+
+            // Build URL with query parameters
+            $url = "https://" . $account_number . ".restlets.api.netsuite.com/app/site/hosting/restlet.nl"
+                . "?script=customscript_ss_rl_uom_conversion"
+                . "&deploy=customdeploy_ss_rl_uom_conversion";
+
+            // Add optional filters to URL
+            if (!empty($unitTypeId)) {
+                $url .= "&unitTypeId=" . urlencode($unitTypeId);
+            }
+            if (!empty($unitName)) {
+                $url .= "&unitName=" . urlencode($unitName);
+            }
+            if (!empty($itemId)) {
+                $url .= "&itemId=" . urlencode($itemId);
+            }
+
+            $method = "GET";
+            $data = "";
+            $data = json_decode($data);
+
+            // Call NetSuite RESTlet
+            $send_request = $this->netsuite_connector->callRestApi($url, $method, $data, $company_data, $environment);
+
+            if ($send_request['statusCode'] != 200) {
+                return response()->json([
+                    'status' => 'error',
+                    'error_code' => '',
+                    'error_message' => $send_request['message']
+                ]);
+            }
+
+            // Return success response
+            $responseData = $send_request['message'];
+
+            // Check if the response contains an error from NetSuite
+            if (isset($responseData->success) && $responseData->success === false) {
+                return response()->json([
+                    'status' => 'error',
+                    'error_code' => $responseData->error ?? '',
+                    'error_message' => $responseData->error ?? 'An error occurred'
+                ]);
+            }
+
+            return response()->json([
+                'statusCode' => 200,
+                'response' => 'Success',
+                'data' => $responseData
+            ]);
+
+        } catch (\Exception $ex) {
+            return response()->json([
+                'status' => 'error',
+                'error_code' => '',
+                'error_message' => 'Error: ' . $ex->getMessage() . ' File: ' . $ex->getFile() . ' Line: ' . $ex->getLine()
+            ]);
+        }
+    }
 }

@@ -30,6 +30,7 @@ Route::middleware('auth:api')->group(function () {
     // Truefoods - Sanifu API endpoints
     
     Route::post('truefoods-sanifu/get/items', [\App\Http\Controllers\Sanifu\SanifuItemsController::class, 'getItems']);
+    Route::post('truefoods-sanifu/get/uom-conversion', [\App\Http\Controllers\Sanifu\SanifuItemsController::class, 'getUomConversion']);
     Route::post('truefoods-sanifu/get/customers', [\App\Http\Controllers\Sanifu\SanifuCustomersController::class, 'getCustomers']);
     Route::post('truefoods-sanifu/get/customer-purchases', [\App\Http\Controllers\Sanifu\SanifuCustomersController::class, 'getCustomerPurchases']);
     Route::post('truefoods-sanifu/create/sales-order', [\App\Http\Controllers\Sanifu\SanifuCustomersController::class, 'createSalesOrder']);
