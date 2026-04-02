@@ -678,4 +678,121 @@ class SanifuCustomersController extends Controller
             ]);
         }
     }
+
+    /**
+     * Get shipping addresses from NetSuite using ss_rl_get_shipping_addresses RESTlet
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse|array
+     */
+    public function getShippingAddresses(Request $request)
+    {
+        try {
+            // Get request parameters
+            $company_id = $request->company_id;
+            $environment = $request->environment;
+
+            // Optional pagination and filter parameters
+            $page = $request->page ?? 1;
+            $pageSize = $request->pageSize ?? 50;
+            $customerId = $request->customerId ?? '';
+            $country = $request->country ?? '';
+            $city = $request->city ?? '';
+            $defaultShipping = $request->defaultShipping ?? '';
+
+            // Get company data
+            $company_data = CompanyMaster::where('id', $company_id)->first();
+
+            if (!$company_data) {
+                return response()->json([
+                    'status' => 'error',
+                    'error_code' => '',
+                    'error_message' => 'Company not found'
+                ]);
+            }
+
+            // Determine account number based on environment
+            if ($environment == 'sandbox') {
+                $account_number = $company_data->account_number . '-sb1';
+            } else {
+                $account_number = $company_data->account_number;
+            }
+
+            // Build URL with query parameters
+            $url = "https://" . $account_number . ".restlets.api.netsuite.com/app/site/hosting/restlet.nl"
+                . "?script=customscript_ss_rl_get_shipping_addresses"
+                . "&deploy=customdeploy_ss_rl_get_shipping_addresses"
+                . "&page=" . $page
+                . "&pageSize=" . $pageSize;
+
+            // Add optional filters to URL
+            if (!empty($customerId)) {
+                $url .= "&customerId=" . urlencode($customerId);
+            }
+            if (!empty($country)) {
+                $url .= "&country=" . urlencode($country);
+            }
+            if (!empty($city)) {
+                $url .= "&city=" . urlencode($city);
+            }
+            if ($defaultShipping !== '') {
+                $url .= "&defaultShipping=" . ($defaultShipping ? 'true' : 'false');
+            }
+
+            $method = "GET";
+            $data = "";
+            $data = json_decode($data);
+
+            // Call NetSuite RESTlet
+            $send_request = $this->netsuite_connector->callRestApi($url, $method, $data, $company_data, $environment);
+
+            if ($send_request['statusCode'] != 200) {
+                return response()->json([
+                    'status' => 'error',
+                    'error_code' => '',
+                    'error_message' => $send_request['message']
+                ]);
+            }
+
+            // Return success response
+            $responseData = $send_request['message'];
+
+            // Check if the response contains an error from NetSuite
+            if (isset($responseData->success) && $responseData->success === false) {
+                return response()->json([
+                    'status' => 'error',
+                    'error_code' => $responseData->error ?? '',
+                    'error_message' => $responseData->error ?? 'An error occurred'
+                ]);
+            }
+
+            // Format response with pagination at top level
+            $formattedResponse = [
+                'statusCode' => 200,
+                'response' => 'Success',
+                'data' => $responseData->data ?? $responseData
+            ];
+
+            // Add pagination info if available
+            if (isset($responseData->pagination)) {
+                $formattedResponse['pagination'] = [
+                    'page' => $responseData->pagination->page ?? 1,
+                    'pageSize' => $responseData->pagination->pageSize ?? $pageSize,
+                    'totalRecords' => $responseData->pagination->totalRecords ?? 0,
+                    'totalPages' => $responseData->pagination->totalPages ?? 1,
+                    'hasNextPage' => $responseData->pagination->hasNextPage ?? false,
+                    'hasPreviousPage' => $responseData->pagination->hasPreviousPage ?? false
+                ];
+            }
+
+            return response()->json($formattedResponse);
+
+        } catch (\Exception $ex) {
+            return response()->json([
+                'status' => 'error',
+                'error_code' => '',
+                'error_message' => 'Error: ' . $ex->getMessage() . ' File: ' . $ex->getFile() . ' Line: ' . $ex->getLine()
+            ]);
+        }
+    }
 }

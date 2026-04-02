@@ -266,6 +266,36 @@ paths:
         '500':
           description: Internal server error
 
+  /get/shipping-addresses:
+    post:
+      tags:
+        - Customers
+      summary: Get Shipping Addresses
+      description: Retrieve a paginated list of shipping addresses with optional filters
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShippingAddressesRequest'
+            example:
+              company_id: 6
+              environment: sandbox
+              page: 1
+              pageSize: 50
+              customerId: "1378"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShippingAddressesResponse'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+
   /get/customer-purchases:
     post:
       tags:
@@ -785,6 +815,95 @@ components:
         totalPages:
           type: integer
           description: Total number of pages
+
+    ShippingAddressesRequest:
+      type: object
+      required:
+        - company_id
+        - environment
+      properties:
+        company_id:
+          type: integer
+          description: Company identifier
+        environment:
+          type: string
+          enum: [sandbox, production]
+          description: Environment type
+        page:
+          type: integer
+          default: 1
+          description: Page number for pagination
+        pageSize:
+          type: integer
+          default: 50
+          description: Number of records per page (max 1000)
+        customerId:
+          type: string
+          description: Filter by customer internal ID
+        country:
+          type: string
+          description: Filter by country code (e.g., KE, US)
+        city:
+          type: string
+          description: Filter by city name (contains)
+        defaultShipping:
+          type: boolean
+          description: Filter by default shipping addresses only
+
+    ShippingAddressesResponse:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          example: 200
+        response:
+          type: string
+          example: Success
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              addressee:
+                type: string
+              attention:
+                type: string
+              label:
+                type: string
+              address1:
+                type: string
+              address2:
+                type: string
+              address3:
+                type: string
+              city:
+                type: string
+              state:
+                type: string
+              stateText:
+                type: string
+              zip:
+                type: string
+              country:
+                type: string
+              countryText:
+                type: string
+              phone:
+                type: string
+              isDefaultShipping:
+                type: boolean
+              isDefaultBilling:
+                type: boolean
+              isResidential:
+                type: boolean
+              entityId:
+                type: string
+              entityName:
+                type: string
+        pagination:
+          $ref: '#/components/schemas/Pagination'
 
     UomConversionRequest:
       type: object
