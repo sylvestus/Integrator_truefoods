@@ -1,0 +1,926 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Truefoods Sanifu API",
+        "description": "API for Truefoods Sanifu integration with NetSuite. This API provides endpoints for managing items, customers, customer purchases, and sales orders.",
+        "contact": {
+            "name": "API Support"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "https://netsuiteintegrator.dynamicsserv.com:4140/api/truefoods-sanifu",
+            "description": "Production Server"
+        }
+    ],
+    "paths": {
+        "/api/login": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "User Login",
+                "description": "Authenticate user and get access token",
+                "operationId": "a8c99997ecfb28344616a3b8ffdb9590",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "description": "User email address",
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "admin@example.com"
+                                    },
+                                    "password": {
+                                        "description": "User password",
+                                        "type": "string",
+                                        "example": "password123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login successful"
+                    },
+                    "401": {
+                        "description": "Invalid credentials"
+                    }
+                }
+            }
+        },
+        "/get/customers": {
+            "post": {
+                "tags": [
+                    "Customers"
+                ],
+                "summary": "Get Customers",
+                "description": "Retrieve a paginated list of customers with optional filters",
+                "operationId": "cee39241610804591a21992965078cd6",
+                "parameters": [
+                    {
+                        "name": "company_id",
+                        "in": "query",
+                        "description": "Company identifier",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 6
+                    },
+                    {
+                        "name": "environment",
+                        "in": "query",
+                        "description": "Environment type",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "sandbox",
+                                "production"
+                            ]
+                        },
+                        "example": "sandbox"
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number for pagination",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        },
+                        "example": 1
+                    },
+                    {
+                        "name": "customerId",
+                        "in": "query",
+                        "description": "Filter by specific customer ID",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "companyName",
+                        "in": "query",
+                        "description": "Filter by company name",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "description": "Filter by customer email",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "phone",
+                        "in": "query",
+                        "description": "Filter by customer phone",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "isInactive",
+                        "in": "query",
+                        "description": "Filter by inactive status",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/get/customer-purchases": {
+            "post": {
+                "tags": [
+                    "Customers"
+                ],
+                "summary": "Get Customer Purchases",
+                "description": "Retrieve purchase history for a specific customer",
+                "operationId": "fd9e0a69c95c7cddc167e9716aa523e2",
+                "parameters": [
+                    {
+                        "name": "company_id",
+                        "in": "query",
+                        "description": "Company identifier",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 6
+                    },
+                    {
+                        "name": "environment",
+                        "in": "query",
+                        "description": "Environment type",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "sandbox",
+                                "production"
+                            ]
+                        },
+                        "example": "sandbox"
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number for pagination",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        },
+                        "example": 1
+                    },
+                    {
+                        "name": "pageSize",
+                        "in": "query",
+                        "description": "Number of records per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 20
+                        },
+                        "example": 20
+                    },
+                    {
+                        "name": "customerId",
+                        "in": "query",
+                        "description": "Customer ID to retrieve purchases for",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1378
+                    },
+                    {
+                        "name": "transactionType",
+                        "in": "query",
+                        "description": "Filter by transaction type",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "invoice",
+                                "salesorder",
+                                "cashsale",
+                                "creditmemo",
+                                "returnauthorization",
+                                "estimate"
+                            ]
+                        },
+                        "example": "salesorder"
+                    },
+                    {
+                        "name": "dateFrom",
+                        "in": "query",
+                        "description": "Start date filter (DD/MM/YYYY format)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "29/03/2026"
+                    },
+                    {
+                        "name": "dateTo",
+                        "in": "query",
+                        "description": "End date filter (DD/MM/YYYY format)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "30/03/2026"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/create/sales-order": {
+            "post": {
+                "tags": [
+                    "Sales Orders"
+                ],
+                "summary": "Create Sales Order",
+                "description": "Create a new sales order",
+                "operationId": "d0e09455c7487687407415008a8c600d",
+                "parameters": [
+                    {
+                        "name": "company_id",
+                        "in": "query",
+                        "description": "Company identifier",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 6
+                    },
+                    {
+                        "name": "environment",
+                        "in": "query",
+                        "description": "Environment type",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "sandbox",
+                                "production"
+                            ]
+                        },
+                        "example": "sandbox"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "company_id",
+                                    "environment",
+                                    "customerId",
+                                    "tranDate",
+                                    "otherRefNum",
+                                    "shipDate",
+                                    "department",
+                                    "location",
+                                    "status",
+                                    "items"
+                                ],
+                                "properties": {
+                                    "company_id": {
+                                        "description": "Company identifier",
+                                        "type": "integer"
+                                    },
+                                    "environment": {
+                                        "description": "Environment type",
+                                        "type": "string",
+                                        "enum": [
+                                            "sandbox",
+                                            "production"
+                                        ]
+                                    },
+                                    "customerId": {
+                                        "description": "Customer ID for the order",
+                                        "type": "integer"
+                                    },
+                                    "status": {
+                                        "description": "Order status",
+                                        "type": "string",
+                                        "enum": [
+                                            "A",
+                                            "B"
+                                        ]
+                                    },
+                                    "memo": {
+                                        "description": "Order memo/notes",
+                                        "type": "string"
+                                    },
+                                    "tranDate": {
+                                        "description": "Transaction date (YYYY-MM-DD)",
+                                        "type": "string",
+                                        "format": "date"
+                                    },
+                                    "dueDate": {
+                                        "description": "Due date (YYYY-MM-DD)",
+                                        "type": "string",
+                                        "format": "date"
+                                    },
+                                    "shipDate": {
+                                        "description": "Ship date (YYYY-MM-DD)",
+                                        "type": "string",
+                                        "format": "date"
+                                    },
+                                    "otherRefNum": {
+                                        "description": "External reference number (e.g., PO number)",
+                                        "type": "string"
+                                    },
+                                    "terms": {
+                                        "description": "Payment terms ID",
+                                        "type": "integer"
+                                    },
+                                    "salesRep": {
+                                        "description": "Sales representative ID",
+                                        "type": "integer"
+                                    },
+                                    "department": {
+                                        "description": "Department ID",
+                                        "type": "integer"
+                                    },
+                                    "classId": {
+                                        "description": "Class ID",
+                                        "type": "integer"
+                                    },
+                                    "location": {
+                                        "description": "Location ID",
+                                        "type": "integer"
+                                    },
+                                    "salesType": {
+                                        "description": "Sales type ID",
+                                        "type": "integer"
+                                    },
+                                    "channel": {
+                                        "description": "Sales channel ID",
+                                        "type": "integer"
+                                    },
+                                    "region": {
+                                        "description": "Region ID",
+                                        "type": "integer"
+                                    },
+                                    "widgetLink": {
+                                        "description": "Widget link URL",
+                                        "type": "string"
+                                    },
+                                    "items": {
+                                        "type": "array",
+                                        "items": {
+                                            "required": [
+                                                "itemId",
+                                                "quantity",
+                                                "taxCode",
+                                                "location"
+                                            ],
+                                            "properties": {
+                                                "itemId": {
+                                                    "description": "Item ID",
+                                                    "type": "integer"
+                                                },
+                                                "quantity": {
+                                                    "description": "Quantity",
+                                                    "type": "integer"
+                                                },
+                                                "rate": {
+                                                    "description": "Unit price",
+                                                    "type": "number"
+                                                },
+                                                "amount": {
+                                                    "description": "Line total amount",
+                                                    "type": "number"
+                                                },
+                                                "description": {
+                                                    "description": "Line item description",
+                                                    "type": "string"
+                                                },
+                                                "taxCode": {
+                                                    "description": "Tax code ID",
+                                                    "type": "integer"
+                                                },
+                                                "location": {
+                                                    "description": "Item location ID",
+                                                    "type": "integer"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Sales order created successfully"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/update/sales-order": {
+            "post": {
+                "tags": [
+                    "Sales Orders"
+                ],
+                "summary": "Update Sales Order",
+                "description": "Update an existing sales order",
+                "operationId": "24d837ef5937ef656606ab351738ec88",
+                "parameters": [
+                    {
+                        "name": "company_id",
+                        "in": "query",
+                        "description": "Company identifier",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 6
+                    },
+                    {
+                        "name": "environment",
+                        "in": "query",
+                        "description": "Environment type",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "sandbox",
+                                "production"
+                            ]
+                        },
+                        "example": "sandbox"
+                    },
+                    {
+                        "name": "orderId",
+                        "in": "query",
+                        "description": "Sales order ID to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 3870177
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "memo": {
+                                        "description": "Order memo/notes",
+                                        "type": "string"
+                                    },
+                                    "tranDate": {
+                                        "description": "Transaction date (YYYY-MM-DD)",
+                                        "type": "string",
+                                        "format": "date"
+                                    },
+                                    "dueDate": {
+                                        "description": "Due date (YYYY-MM-DD)",
+                                        "type": "string",
+                                        "format": "date"
+                                    },
+                                    "shipDate": {
+                                        "description": "Ship date (YYYY-MM-DD)",
+                                        "type": "string",
+                                        "format": "date"
+                                    },
+                                    "otherRefNum": {
+                                        "description": "External reference number",
+                                        "type": "string"
+                                    },
+                                    "terms": {
+                                        "description": "Payment terms ID",
+                                        "type": "integer"
+                                    },
+                                    "salesRep": {
+                                        "description": "Sales representative ID",
+                                        "type": "integer"
+                                    },
+                                    "department": {
+                                        "description": "Department ID",
+                                        "type": "integer"
+                                    },
+                                    "classId": {
+                                        "description": "Class ID",
+                                        "type": "integer"
+                                    },
+                                    "location": {
+                                        "description": "Location ID",
+                                        "type": "integer"
+                                    },
+                                    "salesType": {
+                                        "description": "Sales type ID",
+                                        "type": "integer"
+                                    },
+                                    "channel": {
+                                        "description": "Sales channel ID",
+                                        "type": "integer"
+                                    },
+                                    "region": {
+                                        "description": "Region ID",
+                                        "type": "integer"
+                                    },
+                                    "items": {
+                                        "type": "array",
+                                        "items": {
+                                            "required": [
+                                                "line"
+                                            ],
+                                            "properties": {
+                                                "line": {
+                                                    "description": "Line number to update",
+                                                    "type": "integer"
+                                                },
+                                                "quantity": {
+                                                    "description": "Quantity",
+                                                    "type": "integer"
+                                                },
+                                                "rate": {
+                                                    "description": "Unit price",
+                                                    "type": "number"
+                                                },
+                                                "amount": {
+                                                    "description": "Line total amount",
+                                                    "type": "number"
+                                                },
+                                                "description": {
+                                                    "description": "Line item description",
+                                                    "type": "string"
+                                                },
+                                                "taxCode": {
+                                                    "description": "Tax code ID",
+                                                    "type": "integer"
+                                                },
+                                                "location": {
+                                                    "description": "Item location ID",
+                                                    "type": "integer"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Sales order updated successfully"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Sales order not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/get/shipping-addresses": {
+            "post": {
+                "tags": [
+                    "Customers"
+                ],
+                "summary": "Get Shipping Addresses",
+                "description": "Retrieve a paginated list of shipping addresses with optional filters",
+                "operationId": "f72c3e3af1deda4075dec1e57f48e90f",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "company_id",
+                                    "environment"
+                                ],
+                                "properties": {
+                                    "company_id": {
+                                        "description": "Company identifier",
+                                        "type": "integer"
+                                    },
+                                    "environment": {
+                                        "description": "Environment type",
+                                        "type": "string",
+                                        "enum": [
+                                            "sandbox",
+                                            "production"
+                                        ]
+                                    },
+                                    "page": {
+                                        "description": "Page number for pagination",
+                                        "type": "integer",
+                                        "default": 1
+                                    },
+                                    "pageSize": {
+                                        "description": "Number of records per page (max 1000)",
+                                        "type": "integer",
+                                        "default": 50
+                                    },
+                                    "customerId": {
+                                        "description": "Filter by customer internal ID",
+                                        "type": "string"
+                                    },
+                                    "country": {
+                                        "description": "Filter by country code (e.g., KE, US)",
+                                        "type": "string"
+                                    },
+                                    "city": {
+                                        "description": "Filter by city name (contains)",
+                                        "type": "string"
+                                    },
+                                    "defaultShipping": {
+                                        "description": "Filter by default shipping addresses only",
+                                        "type": "boolean"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful response"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/get/items": {
+            "post": {
+                "tags": [
+                    "Items"
+                ],
+                "summary": "Get Items",
+                "description": "Retrieve a paginated list of items with optional filters",
+                "operationId": "1ac846214664084b83aed7a42fa8cc04",
+                "parameters": [
+                    {
+                        "name": "company_id",
+                        "in": "query",
+                        "description": "Company identifier",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 6
+                    },
+                    {
+                        "name": "environment",
+                        "in": "query",
+                        "description": "Environment type",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "sandbox",
+                                "production"
+                            ]
+                        },
+                        "example": "sandbox"
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number for pagination",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        },
+                        "example": 1
+                    },
+                    {
+                        "name": "pageSize",
+                        "in": "query",
+                        "description": "Number of items per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 50
+                        },
+                        "example": 50
+                    },
+                    {
+                        "name": "itemId",
+                        "in": "query",
+                        "description": "Filter by specific item ID",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "displayName",
+                        "in": "query",
+                        "description": "Filter by item display name",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "category",
+                        "in": "query",
+                        "description": "Filter by item category",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "isInactive",
+                        "in": "query",
+                        "description": "Include inactive items",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "default": false
+                        }
+                    },
+                    {
+                        "name": "includeLocations",
+                        "in": "query",
+                        "description": "Include location data in response",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "default": false
+                        }
+                    },
+                    {
+                        "name": "includePricing",
+                        "in": "query",
+                        "description": "Include pricing data in response",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "default": false
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/get/uom-conversion": {
+            "post": {
+                "tags": [
+                    "Items"
+                ],
+                "summary": "Get UOM Conversion",
+                "description": "Get unit of measure conversion data. No parameters: Get all unit types. unitTypeId: Get all units for a specific unit type. unitTypeId + unitName: Get conversion rate for a specific unit. itemId: Get units from an item's unit type.",
+                "operationId": "70643dd353379c4c3529c699e9583548",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "company_id",
+                                    "environment"
+                                ],
+                                "properties": {
+                                    "company_id": {
+                                        "description": "Company identifier",
+                                        "type": "integer"
+                                    },
+                                    "environment": {
+                                        "description": "Environment type",
+                                        "type": "string",
+                                        "enum": [
+                                            "sandbox",
+                                            "production"
+                                        ]
+                                    },
+                                    "unitTypeId": {
+                                        "description": "Unit type internal ID",
+                                        "type": "string"
+                                    },
+                                    "unitName": {
+                                        "description": "Specific unit name to get conversion rate for",
+                                        "type": "string"
+                                    },
+                                    "itemId": {
+                                        "description": "Item internal ID to get its unit type",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful response"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Authentication",
+            "description": "User authentication endpoints"
+        },
+        {
+            "name": "Items",
+            "description": "Item management endpoints"
+        },
+        {
+            "name": "Customers",
+            "description": "Customer management endpoints"
+        },
+        {
+            "name": "Sales Orders",
+            "description": "Sales order management endpoints"
+        }
+    ]
+}

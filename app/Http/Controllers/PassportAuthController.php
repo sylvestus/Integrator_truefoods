@@ -40,6 +40,23 @@ class PassportAuthController extends Controller
 
     /**
      * Login
+     *
+     * @OA\Post(
+     *     path="/api/login",
+     *     tags={"Authentication"},
+     *     summary="User Login",
+     *     description="Authenticate user and get access token",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"email","password"},
+     *             @OA\Property(property="email", type="string", format="email", description="User email address", example="admin@example.com"),
+     *             @OA\Property(property="password", type="string", description="User password", example="password123")
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Login successful"),
+     *     @OA\Response(response=401, description="Invalid credentials")
+     * )
      */
     public function login(Request $request)
     {

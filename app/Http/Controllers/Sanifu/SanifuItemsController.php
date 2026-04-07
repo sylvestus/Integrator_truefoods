@@ -20,6 +20,26 @@ class SanifuItemsController extends Controller
     /**
      * Get inventory items from NetSuite using ss_rl_get_inventory_items RESTlet
      *
+     * @OA\Post(
+     *     path="/get/items",
+     *     tags={"Items"},
+     *     summary="Get Items",
+     *     description="Retrieve a paginated list of items with optional filters",
+     *     @OA\Parameter(name="company_id", in="query", required=true, @OA\Schema(type="integer"), example=6, description="Company identifier"),
+     *     @OA\Parameter(name="environment", in="query", required=true, @OA\Schema(type="string", enum={"sandbox","production"}), example="sandbox", description="Environment type"),
+     *     @OA\Parameter(name="page", in="query", required=false, @OA\Schema(type="integer", default=1), example=1, description="Page number for pagination"),
+     *     @OA\Parameter(name="pageSize", in="query", required=false, @OA\Schema(type="integer", default=50), example=50, description="Number of items per page"),
+     *     @OA\Parameter(name="itemId", in="query", required=false, @OA\Schema(type="string"), description="Filter by specific item ID"),
+     *     @OA\Parameter(name="displayName", in="query", required=false, @OA\Schema(type="string"), description="Filter by item display name"),
+     *     @OA\Parameter(name="category", in="query", required=false, @OA\Schema(type="string"), description="Filter by item category"),
+     *     @OA\Parameter(name="isInactive", in="query", required=false, @OA\Schema(type="boolean", default=false), description="Include inactive items"),
+     *     @OA\Parameter(name="includeLocations", in="query", required=false, @OA\Schema(type="boolean", default=false), description="Include location data in response"),
+     *     @OA\Parameter(name="includePricing", in="query", required=false, @OA\Schema(type="boolean", default=false), description="Include pricing data in response"),
+     *     @OA\Response(response=200, description="Successful response"),
+     *     @OA\Response(response=400, description="Bad request"),
+     *     @OA\Response(response=500, description="Internal server error")
+     * )
+     *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse|array
      */
@@ -147,6 +167,27 @@ class SanifuItemsController extends Controller
 
     /**
      * Get UOM conversion data from NetSuite using ss_rl_uom_conversion RESTlet
+     *
+     * @OA\Post(
+     *     path="/get/uom-conversion",
+     *     tags={"Items"},
+     *     summary="Get UOM Conversion",
+     *     description="Get unit of measure conversion data. No parameters: Get all unit types. unitTypeId: Get all units for a specific unit type. unitTypeId + unitName: Get conversion rate for a specific unit. itemId: Get units from an item's unit type.",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"company_id","environment"},
+     *             @OA\Property(property="company_id", type="integer", description="Company identifier"),
+     *             @OA\Property(property="environment", type="string", enum={"sandbox","production"}, description="Environment type"),
+     *             @OA\Property(property="unitTypeId", type="string", description="Unit type internal ID"),
+     *             @OA\Property(property="unitName", type="string", description="Specific unit name to get conversion rate for"),
+     *             @OA\Property(property="itemId", type="string", description="Item internal ID to get its unit type")
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Successful response"),
+     *     @OA\Response(response=400, description="Bad request"),
+     *     @OA\Response(response=500, description="Internal server error")
+     * )
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse|array

@@ -7,7 +7,9 @@
       "Bash(net start mysql)",
       "Bash(C:xamppmysql_stop.bat)",
       "Bash(C:xamppmysql_start.bat)",
-      "Bash(dir \"C:\\xampp\\mysql\\data\\ib_logfile*\")"
+      "Bash(dir \"C:\\xampp\\mysql\\data\\ib_logfile*\")",
+      "Bash(grep:*)",
+      "Bash(ls -la C:/xampp/htdocs/Integrator_truefoods/*.md)"
     ],
     "deny": [],
     "ask": []

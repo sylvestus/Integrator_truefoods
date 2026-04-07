@@ -20,6 +20,24 @@ class SanifuCustomersController extends Controller
     /**
      * Get customers from NetSuite using ss_rl_get_customers RESTlet
      *
+     * @OA\Post(
+     *     path="/get/customers",
+     *     tags={"Customers"},
+     *     summary="Get Customers",
+     *     description="Retrieve a paginated list of customers with optional filters",
+     *     @OA\Parameter(name="company_id", in="query", required=true, @OA\Schema(type="integer"), example=6, description="Company identifier"),
+     *     @OA\Parameter(name="environment", in="query", required=true, @OA\Schema(type="string", enum={"sandbox","production"}), example="sandbox", description="Environment type"),
+     *     @OA\Parameter(name="page", in="query", required=false, @OA\Schema(type="integer", default=1), example=1, description="Page number for pagination"),
+     *     @OA\Parameter(name="customerId", in="query", required=false, @OA\Schema(type="string"), description="Filter by specific customer ID"),
+     *     @OA\Parameter(name="companyName", in="query", required=false, @OA\Schema(type="string"), description="Filter by company name"),
+     *     @OA\Parameter(name="email", in="query", required=false, @OA\Schema(type="string"), description="Filter by customer email"),
+     *     @OA\Parameter(name="phone", in="query", required=false, @OA\Schema(type="string"), description="Filter by customer phone"),
+     *     @OA\Parameter(name="isInactive", in="query", required=false, @OA\Schema(type="boolean"), description="Filter by inactive status"),
+     *     @OA\Response(response=200, description="Successful response"),
+     *     @OA\Response(response=400, description="Bad request"),
+     *     @OA\Response(response=500, description="Internal server error")
+     * )
+     *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse|array
      */
@@ -147,6 +165,24 @@ class SanifuCustomersController extends Controller
 
     /**
      * Get customer purchase history from NetSuite using ss_rl_get_customer_purchases RESTlet
+     *
+     * @OA\Post(
+     *     path="/get/customer-purchases",
+     *     tags={"Customers"},
+     *     summary="Get Customer Purchases",
+     *     description="Retrieve purchase history for a specific customer",
+     *     @OA\Parameter(name="company_id", in="query", required=true, @OA\Schema(type="integer"), example=6, description="Company identifier"),
+     *     @OA\Parameter(name="environment", in="query", required=true, @OA\Schema(type="string", enum={"sandbox","production"}), example="sandbox", description="Environment type"),
+     *     @OA\Parameter(name="page", in="query", required=false, @OA\Schema(type="integer", default=1), example=1, description="Page number for pagination"),
+     *     @OA\Parameter(name="pageSize", in="query", required=false, @OA\Schema(type="integer", default=20), example=20, description="Number of records per page"),
+     *     @OA\Parameter(name="customerId", in="query", required=true, @OA\Schema(type="integer"), example=1378, description="Customer ID to retrieve purchases for"),
+     *     @OA\Parameter(name="transactionType", in="query", required=false, @OA\Schema(type="string", enum={"invoice","salesorder","cashsale","creditmemo","returnauthorization","estimate"}), example="salesorder", description="Filter by transaction type"),
+     *     @OA\Parameter(name="dateFrom", in="query", required=false, @OA\Schema(type="string"), example="29/03/2026", description="Start date filter (DD/MM/YYYY format)"),
+     *     @OA\Parameter(name="dateTo", in="query", required=false, @OA\Schema(type="string"), example="30/03/2026", description="End date filter (DD/MM/YYYY format)"),
+     *     @OA\Response(response=200, description="Successful response"),
+     *     @OA\Response(response=400, description="Bad request"),
+     *     @OA\Response(response=500, description="Internal server error")
+     * )
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse|array
@@ -287,6 +323,52 @@ class SanifuCustomersController extends Controller
 
     /**
      * Create a sales order in NetSuite using ss_rl_create_sales_order RESTlet
+     *
+     * @OA\Post(
+     *     path="/create/sales-order",
+     *     tags={"Sales Orders"},
+     *     summary="Create Sales Order",
+     *     description="Create a new sales order",
+     *     @OA\Parameter(name="company_id", in="query", required=true, @OA\Schema(type="integer"), example=6, description="Company identifier"),
+     *     @OA\Parameter(name="environment", in="query", required=true, @OA\Schema(type="string", enum={"sandbox","production"}), example="sandbox", description="Environment type"),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"company_id","environment","customerId","tranDate","otherRefNum","shipDate","department","location","status","items"},
+     *             @OA\Property(property="company_id", type="integer", description="Company identifier"),
+     *             @OA\Property(property="environment", type="string", enum={"sandbox","production"}, description="Environment type"),
+     *             @OA\Property(property="customerId", type="integer", description="Customer ID for the order"),
+     *             @OA\Property(property="status", type="string", enum={"A","B"}, description="Order status"),
+     *             @OA\Property(property="memo", type="string", description="Order memo/notes"),
+     *             @OA\Property(property="tranDate", type="string", format="date", description="Transaction date (YYYY-MM-DD)"),
+     *             @OA\Property(property="dueDate", type="string", format="date", description="Due date (YYYY-MM-DD)"),
+     *             @OA\Property(property="shipDate", type="string", format="date", description="Ship date (YYYY-MM-DD)"),
+     *             @OA\Property(property="otherRefNum", type="string", description="External reference number (e.g., PO number)"),
+     *             @OA\Property(property="terms", type="integer", description="Payment terms ID"),
+     *             @OA\Property(property="salesRep", type="integer", description="Sales representative ID"),
+     *             @OA\Property(property="department", type="integer", description="Department ID"),
+     *             @OA\Property(property="classId", type="integer", description="Class ID"),
+     *             @OA\Property(property="location", type="integer", description="Location ID"),
+     *             @OA\Property(property="salesType", type="integer", description="Sales type ID"),
+     *             @OA\Property(property="channel", type="integer", description="Sales channel ID"),
+     *             @OA\Property(property="region", type="integer", description="Region ID"),
+     *             @OA\Property(property="widgetLink", type="string", description="Widget link URL"),
+     *             @OA\Property(property="items", type="array", @OA\Items(
+     *                 required={"itemId","quantity","taxCode","location"},
+     *                 @OA\Property(property="itemId", type="integer", description="Item ID"),
+     *                 @OA\Property(property="quantity", type="integer", description="Quantity"),
+     *                 @OA\Property(property="rate", type="number", description="Unit price"),
+     *                 @OA\Property(property="amount", type="number", description="Line total amount"),
+     *                 @OA\Property(property="description", type="string", description="Line item description"),
+     *                 @OA\Property(property="taxCode", type="integer", description="Tax code ID"),
+     *                 @OA\Property(property="location", type="integer", description="Item location ID")
+     *             ))
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Sales order created successfully"),
+     *     @OA\Response(response=400, description="Bad request"),
+     *     @OA\Response(response=500, description="Internal server error")
+     * )
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse|array
@@ -481,6 +563,48 @@ class SanifuCustomersController extends Controller
 
     /**
      * Update a sales order in NetSuite using ss_rl_update_sales_order RESTlet
+     *
+     * @OA\Post(
+     *     path="/update/sales-order",
+     *     tags={"Sales Orders"},
+     *     summary="Update Sales Order",
+     *     description="Update an existing sales order",
+     *     @OA\Parameter(name="company_id", in="query", required=true, @OA\Schema(type="integer"), example=6, description="Company identifier"),
+     *     @OA\Parameter(name="environment", in="query", required=true, @OA\Schema(type="string", enum={"sandbox","production"}), example="sandbox", description="Environment type"),
+     *     @OA\Parameter(name="orderId", in="query", required=true, @OA\Schema(type="integer"), example=3870177, description="Sales order ID to update"),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="memo", type="string", description="Order memo/notes"),
+     *             @OA\Property(property="tranDate", type="string", format="date", description="Transaction date (YYYY-MM-DD)"),
+     *             @OA\Property(property="dueDate", type="string", format="date", description="Due date (YYYY-MM-DD)"),
+     *             @OA\Property(property="shipDate", type="string", format="date", description="Ship date (YYYY-MM-DD)"),
+     *             @OA\Property(property="otherRefNum", type="string", description="External reference number"),
+     *             @OA\Property(property="terms", type="integer", description="Payment terms ID"),
+     *             @OA\Property(property="salesRep", type="integer", description="Sales representative ID"),
+     *             @OA\Property(property="department", type="integer", description="Department ID"),
+     *             @OA\Property(property="classId", type="integer", description="Class ID"),
+     *             @OA\Property(property="location", type="integer", description="Location ID"),
+     *             @OA\Property(property="salesType", type="integer", description="Sales type ID"),
+     *             @OA\Property(property="channel", type="integer", description="Sales channel ID"),
+     *             @OA\Property(property="region", type="integer", description="Region ID"),
+     *             @OA\Property(property="items", type="array", @OA\Items(
+     *                 required={"line"},
+     *                 @OA\Property(property="line", type="integer", description="Line number to update"),
+     *                 @OA\Property(property="quantity", type="integer", description="Quantity"),
+     *                 @OA\Property(property="rate", type="number", description="Unit price"),
+     *                 @OA\Property(property="amount", type="number", description="Line total amount"),
+     *                 @OA\Property(property="description", type="string", description="Line item description"),
+     *                 @OA\Property(property="taxCode", type="integer", description="Tax code ID"),
+     *                 @OA\Property(property="location", type="integer", description="Item location ID")
+     *             ))
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Sales order updated successfully"),
+     *     @OA\Response(response=400, description="Bad request"),
+     *     @OA\Response(response=404, description="Sales order not found"),
+     *     @OA\Response(response=500, description="Internal server error")
+     * )
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse|array
@@ -681,6 +805,30 @@ class SanifuCustomersController extends Controller
 
     /**
      * Get shipping addresses from NetSuite using ss_rl_get_shipping_addresses RESTlet
+     *
+     * @OA\Post(
+     *     path="/get/shipping-addresses",
+     *     tags={"Customers"},
+     *     summary="Get Shipping Addresses",
+     *     description="Retrieve a paginated list of shipping addresses with optional filters",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"company_id","environment"},
+     *             @OA\Property(property="company_id", type="integer", description="Company identifier"),
+     *             @OA\Property(property="environment", type="string", enum={"sandbox","production"}, description="Environment type"),
+     *             @OA\Property(property="page", type="integer", default=1, description="Page number for pagination"),
+     *             @OA\Property(property="pageSize", type="integer", default=50, description="Number of records per page (max 1000)"),
+     *             @OA\Property(property="customerId", type="string", description="Filter by customer internal ID"),
+     *             @OA\Property(property="country", type="string", description="Filter by country code (e.g., KE, US)"),
+     *             @OA\Property(property="city", type="string", description="Filter by city name (contains)"),
+     *             @OA\Property(property="defaultShipping", type="boolean", description="Filter by default shipping addresses only")
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Successful response"),
+     *     @OA\Response(response=400, description="Bad request"),
+     *     @OA\Response(response=500, description="Internal server error")
+     * )
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse|array
