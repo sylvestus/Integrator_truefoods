@@ -380,7 +380,7 @@ paths:
       tags:
         - Sales Orders
       summary: Create Sales Order
-      description: Create a new sales order
+      description: Create a new sales order here
       parameters:
         - name: company_id
           in: query
