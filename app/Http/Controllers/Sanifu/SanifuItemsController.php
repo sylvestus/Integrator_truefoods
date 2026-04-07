@@ -35,6 +35,7 @@ class SanifuItemsController extends Controller
      *     @OA\Parameter(name="isInactive", in="query", required=false, @OA\Schema(type="boolean", default=false), description="Include inactive items"),
      *     @OA\Parameter(name="includeLocations", in="query", required=false, @OA\Schema(type="boolean", default=false), description="Include location data in response"),
      *     @OA\Parameter(name="includePricing", in="query", required=false, @OA\Schema(type="boolean", default=false), description="Include pricing data in response"),
+     *     security={{"bearerAuth":{}}},
      *     @OA\Response(response=200, description="Successful response"),
      *     @OA\Response(response=400, description="Bad request"),
      *     @OA\Response(response=500, description="Internal server error")
@@ -184,6 +185,7 @@ class SanifuItemsController extends Controller
      *             @OA\Property(property="itemId", type="string", description="Item internal ID to get its unit type")
      *         )
      *     ),
+     *     security={{"bearerAuth":{}}},
      *     @OA\Response(response=200, description="Successful response"),
      *     @OA\Response(response=400, description="Bad request"),
      *     @OA\Response(response=500, description="Internal server error")

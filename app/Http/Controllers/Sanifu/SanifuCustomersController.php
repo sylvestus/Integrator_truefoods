@@ -33,6 +33,7 @@ class SanifuCustomersController extends Controller
      *     @OA\Parameter(name="email", in="query", required=false, @OA\Schema(type="string"), description="Filter by customer email"),
      *     @OA\Parameter(name="phone", in="query", required=false, @OA\Schema(type="string"), description="Filter by customer phone"),
      *     @OA\Parameter(name="isInactive", in="query", required=false, @OA\Schema(type="boolean"), description="Filter by inactive status"),
+     *     security={{"bearerAuth":{}}},
      *     @OA\Response(response=200, description="Successful response"),
      *     @OA\Response(response=400, description="Bad request"),
      *     @OA\Response(response=500, description="Internal server error")
@@ -179,6 +180,7 @@ class SanifuCustomersController extends Controller
      *     @OA\Parameter(name="transactionType", in="query", required=false, @OA\Schema(type="string", enum={"invoice","salesorder","cashsale","creditmemo","returnauthorization","estimate"}), example="salesorder", description="Filter by transaction type"),
      *     @OA\Parameter(name="dateFrom", in="query", required=false, @OA\Schema(type="string"), example="29/03/2026", description="Start date filter (DD/MM/YYYY format)"),
      *     @OA\Parameter(name="dateTo", in="query", required=false, @OA\Schema(type="string"), example="30/03/2026", description="End date filter (DD/MM/YYYY format)"),
+     *     security={{"bearerAuth":{}}},
      *     @OA\Response(response=200, description="Successful response"),
      *     @OA\Response(response=400, description="Bad request"),
      *     @OA\Response(response=500, description="Internal server error")
@@ -365,6 +367,7 @@ class SanifuCustomersController extends Controller
      *             ))
      *         )
      *     ),
+     *     security={{"bearerAuth":{}}},
      *     @OA\Response(response=200, description="Sales order created successfully"),
      *     @OA\Response(response=400, description="Bad request"),
      *     @OA\Response(response=500, description="Internal server error")
@@ -600,6 +603,7 @@ class SanifuCustomersController extends Controller
      *             ))
      *         )
      *     ),
+     *     security={{"bearerAuth":{}}},
      *     @OA\Response(response=200, description="Sales order updated successfully"),
      *     @OA\Response(response=400, description="Bad request"),
      *     @OA\Response(response=404, description="Sales order not found"),
@@ -825,6 +829,7 @@ class SanifuCustomersController extends Controller
      *             @OA\Property(property="defaultShipping", type="boolean", description="Filter by default shipping addresses only")
      *         )
      *     ),
+     *     security={{"bearerAuth":{}}},
      *     @OA\Response(response=200, description="Successful response"),
      *     @OA\Response(response=400, description="Bad request"),
      *     @OA\Response(response=500, description="Internal server error")
