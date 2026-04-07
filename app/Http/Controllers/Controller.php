@@ -15,7 +15,7 @@ use Illuminate\Routing\Controller as BaseController;
  *     @OA\Contact(name="API Support")
  * )
  * @OA\Server(
- *     url="https://netsuiteintegrator.dynamicsserv.com:4140/api/truefoods-sanifu",
+ *     url="https://netsuiteintegrator.dynamicsserv.com:4140",
  *     description="Production Server"
  * )
  * @OA\Tag(name="Authentication", description="User authentication endpoints")

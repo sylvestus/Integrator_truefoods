@@ -50,8 +50,8 @@ class PassportAuthController extends Controller
      *         required=true,
      *         @OA\JsonContent(
      *             required={"email","password"},
-     *             @OA\Property(property="email", type="string", format="email", description="User email address", example="admin@example.com"),
-     *             @OA\Property(property="password", type="string", description="User password", example="password123")
+     *             @OA\Property(property="email", type="string", format="email", description="(mandatory) User email address", example="admin@example.com"),
+     *             @OA\Property(property="password", type="string", description="(mandatory) User password", example="password123")
      *         )
      *     ),
      *     @OA\Response(response=200, description="Login successful"),

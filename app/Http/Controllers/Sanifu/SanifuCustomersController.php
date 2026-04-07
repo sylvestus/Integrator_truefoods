@@ -21,12 +21,12 @@ class SanifuCustomersController extends Controller
      * Get customers from NetSuite using ss_rl_get_customers RESTlet
      *
      * @OA\Post(
-     *     path="/get/customers",
+     *     path="/api/truefoods-sanifu/get/customers",
      *     tags={"Customers"},
      *     summary="Get Customers",
      *     description="Retrieve a paginated list of customers with optional filters",
-     *     @OA\Parameter(name="company_id", in="query", required=true, @OA\Schema(type="integer"), example=6, description="Company identifier"),
-     *     @OA\Parameter(name="environment", in="query", required=true, @OA\Schema(type="string", enum={"sandbox","production"}), example="sandbox", description="Environment type"),
+     *     @OA\Parameter(name="company_id", in="query", required=true, @OA\Schema(type="integer"), example=6, description="(mandatory) Company identifier"),
+     *     @OA\Parameter(name="environment", in="query", required=true, @OA\Schema(type="string", enum={"sandbox","production"}), example="sandbox", description="(mandatory) Environment type"),
      *     @OA\Parameter(name="page", in="query", required=false, @OA\Schema(type="integer", default=1), example=1, description="Page number for pagination"),
      *     @OA\Parameter(name="customerId", in="query", required=false, @OA\Schema(type="string"), description="Filter by specific customer ID"),
      *     @OA\Parameter(name="companyName", in="query", required=false, @OA\Schema(type="string"), description="Filter by company name"),
@@ -167,15 +167,15 @@ class SanifuCustomersController extends Controller
      * Get customer purchase history from NetSuite using ss_rl_get_customer_purchases RESTlet
      *
      * @OA\Post(
-     *     path="/get/customer-purchases",
+     *     path="/api/truefoods-sanifu/get/customer-purchases",
      *     tags={"Customers"},
      *     summary="Get Customer Purchases",
      *     description="Retrieve purchase history for a specific customer",
-     *     @OA\Parameter(name="company_id", in="query", required=true, @OA\Schema(type="integer"), example=6, description="Company identifier"),
-     *     @OA\Parameter(name="environment", in="query", required=true, @OA\Schema(type="string", enum={"sandbox","production"}), example="sandbox", description="Environment type"),
+     *     @OA\Parameter(name="company_id", in="query", required=true, @OA\Schema(type="integer"), example=6, description="(mandatory) Company identifier"),
+     *     @OA\Parameter(name="environment", in="query", required=true, @OA\Schema(type="string", enum={"sandbox","production"}), example="sandbox", description="(mandatory) Environment type"),
      *     @OA\Parameter(name="page", in="query", required=false, @OA\Schema(type="integer", default=1), example=1, description="Page number for pagination"),
      *     @OA\Parameter(name="pageSize", in="query", required=false, @OA\Schema(type="integer", default=20), example=20, description="Number of records per page"),
-     *     @OA\Parameter(name="customerId", in="query", required=true, @OA\Schema(type="integer"), example=1378, description="Customer ID to retrieve purchases for"),
+     *     @OA\Parameter(name="customerId", in="query", required=true, @OA\Schema(type="integer"), example=1378, description="(mandatory) Customer ID to retrieve purchases for"),
      *     @OA\Parameter(name="transactionType", in="query", required=false, @OA\Schema(type="string", enum={"invoice","salesorder","cashsale","creditmemo","returnauthorization","estimate"}), example="salesorder", description="Filter by transaction type"),
      *     @OA\Parameter(name="dateFrom", in="query", required=false, @OA\Schema(type="string"), example="29/03/2026", description="Start date filter (DD/MM/YYYY format)"),
      *     @OA\Parameter(name="dateTo", in="query", required=false, @OA\Schema(type="string"), example="30/03/2026", description="End date filter (DD/MM/YYYY format)"),
@@ -325,43 +325,43 @@ class SanifuCustomersController extends Controller
      * Create a sales order in NetSuite using ss_rl_create_sales_order RESTlet
      *
      * @OA\Post(
-     *     path="/create/sales-order",
+     *     path="/api/truefoods-sanifu/create/sales-order",
      *     tags={"Sales Orders"},
      *     summary="Create Sales Order",
      *     description="Create a new sales order",
-     *     @OA\Parameter(name="company_id", in="query", required=true, @OA\Schema(type="integer"), example=6, description="Company identifier"),
-     *     @OA\Parameter(name="environment", in="query", required=true, @OA\Schema(type="string", enum={"sandbox","production"}), example="sandbox", description="Environment type"),
+     *     @OA\Parameter(name="company_id", in="query", required=true, @OA\Schema(type="integer"), example=6, description="(mandatory) Company identifier"),
+     *     @OA\Parameter(name="environment", in="query", required=true, @OA\Schema(type="string", enum={"sandbox","production"}), example="sandbox", description="(mandatory) Environment type"),
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
      *             required={"company_id","environment","customerId","tranDate","otherRefNum","shipDate","department","location","status","items"},
-     *             @OA\Property(property="company_id", type="integer", description="Company identifier"),
-     *             @OA\Property(property="environment", type="string", enum={"sandbox","production"}, description="Environment type"),
-     *             @OA\Property(property="customerId", type="integer", description="Customer ID for the order"),
-     *             @OA\Property(property="status", type="string", enum={"A","B"}, description="Order status"),
+     *             @OA\Property(property="company_id", type="integer", description="(mandatory) Company identifier"),
+     *             @OA\Property(property="environment", type="string", enum={"sandbox","production"}, description="(mandatory) Environment type"),
+     *             @OA\Property(property="customerId", type="integer", description="(mandatory) Customer ID for the order"),
+     *             @OA\Property(property="status", type="string", enum={"A","B"}, description="(mandatory) Order status"),
      *             @OA\Property(property="memo", type="string", description="Order memo/notes"),
-     *             @OA\Property(property="tranDate", type="string", format="date", description="Transaction date (YYYY-MM-DD)"),
+     *             @OA\Property(property="tranDate", type="string", format="date", description="(mandatory) Transaction date (YYYY-MM-DD)"),
      *             @OA\Property(property="dueDate", type="string", format="date", description="Due date (YYYY-MM-DD)"),
-     *             @OA\Property(property="shipDate", type="string", format="date", description="Ship date (YYYY-MM-DD)"),
-     *             @OA\Property(property="otherRefNum", type="string", description="External reference number (e.g., PO number)"),
+     *             @OA\Property(property="shipDate", type="string", format="date", description="(mandatory) Ship date (YYYY-MM-DD)"),
+     *             @OA\Property(property="otherRefNum", type="string", description="(mandatory) External reference number (e.g., PO number)"),
      *             @OA\Property(property="terms", type="integer", description="Payment terms ID"),
      *             @OA\Property(property="salesRep", type="integer", description="Sales representative ID"),
-     *             @OA\Property(property="department", type="integer", description="Department ID"),
+     *             @OA\Property(property="department", type="integer", description="(mandatory) Department ID"),
      *             @OA\Property(property="classId", type="integer", description="Class ID"),
-     *             @OA\Property(property="location", type="integer", description="Location ID"),
+     *             @OA\Property(property="location", type="integer", description="(mandatory) Location ID"),
      *             @OA\Property(property="salesType", type="integer", description="Sales type ID"),
      *             @OA\Property(property="channel", type="integer", description="Sales channel ID"),
      *             @OA\Property(property="region", type="integer", description="Region ID"),
      *             @OA\Property(property="widgetLink", type="string", description="Widget link URL"),
-     *             @OA\Property(property="items", type="array", @OA\Items(
+     *             @OA\Property(property="items", type="array", description="(mandatory) Line items for the order", @OA\Items(
      *                 required={"itemId","quantity","taxCode","location"},
-     *                 @OA\Property(property="itemId", type="integer", description="Item ID"),
-     *                 @OA\Property(property="quantity", type="integer", description="Quantity"),
+     *                 @OA\Property(property="itemId", type="integer", description="(mandatory) Item ID"),
+     *                 @OA\Property(property="quantity", type="integer", description="(mandatory) Quantity"),
      *                 @OA\Property(property="rate", type="number", description="Unit price"),
      *                 @OA\Property(property="amount", type="number", description="Line total amount"),
      *                 @OA\Property(property="description", type="string", description="Line item description"),
-     *                 @OA\Property(property="taxCode", type="integer", description="Tax code ID"),
-     *                 @OA\Property(property="location", type="integer", description="Item location ID")
+     *                 @OA\Property(property="taxCode", type="integer", description="(mandatory) Tax code ID"),
+     *                 @OA\Property(property="location", type="integer", description="(mandatory) Item location ID")
      *             ))
      *         )
      *     ),
@@ -565,13 +565,13 @@ class SanifuCustomersController extends Controller
      * Update a sales order in NetSuite using ss_rl_update_sales_order RESTlet
      *
      * @OA\Post(
-     *     path="/update/sales-order",
+     *     path="/api/truefoods-sanifu/update/sales-order",
      *     tags={"Sales Orders"},
      *     summary="Update Sales Order",
      *     description="Update an existing sales order",
-     *     @OA\Parameter(name="company_id", in="query", required=true, @OA\Schema(type="integer"), example=6, description="Company identifier"),
-     *     @OA\Parameter(name="environment", in="query", required=true, @OA\Schema(type="string", enum={"sandbox","production"}), example="sandbox", description="Environment type"),
-     *     @OA\Parameter(name="orderId", in="query", required=true, @OA\Schema(type="integer"), example=3870177, description="Sales order ID to update"),
+     *     @OA\Parameter(name="company_id", in="query", required=true, @OA\Schema(type="integer"), example=6, description="(mandatory) Company identifier"),
+     *     @OA\Parameter(name="environment", in="query", required=true, @OA\Schema(type="string", enum={"sandbox","production"}), example="sandbox", description="(mandatory) Environment type"),
+     *     @OA\Parameter(name="orderId", in="query", required=true, @OA\Schema(type="integer"), example=3870177, description="(mandatory) Sales order ID to update"),
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
@@ -588,9 +588,9 @@ class SanifuCustomersController extends Controller
      *             @OA\Property(property="salesType", type="integer", description="Sales type ID"),
      *             @OA\Property(property="channel", type="integer", description="Sales channel ID"),
      *             @OA\Property(property="region", type="integer", description="Region ID"),
-     *             @OA\Property(property="items", type="array", @OA\Items(
+     *             @OA\Property(property="items", type="array", description="Line items to update", @OA\Items(
      *                 required={"line"},
-     *                 @OA\Property(property="line", type="integer", description="Line number to update"),
+     *                 @OA\Property(property="line", type="integer", description="(mandatory) Line number to update"),
      *                 @OA\Property(property="quantity", type="integer", description="Quantity"),
      *                 @OA\Property(property="rate", type="number", description="Unit price"),
      *                 @OA\Property(property="amount", type="number", description="Line total amount"),
@@ -807,7 +807,7 @@ class SanifuCustomersController extends Controller
      * Get shipping addresses from NetSuite using ss_rl_get_shipping_addresses RESTlet
      *
      * @OA\Post(
-     *     path="/get/shipping-addresses",
+     *     path="/api/truefoods-sanifu/get/shipping-addresses",
      *     tags={"Customers"},
      *     summary="Get Shipping Addresses",
      *     description="Retrieve a paginated list of shipping addresses with optional filters",
@@ -815,8 +815,8 @@ class SanifuCustomersController extends Controller
      *         required=true,
      *         @OA\JsonContent(
      *             required={"company_id","environment"},
-     *             @OA\Property(property="company_id", type="integer", description="Company identifier"),
-     *             @OA\Property(property="environment", type="string", enum={"sandbox","production"}, description="Environment type"),
+     *             @OA\Property(property="company_id", type="integer", description="(mandatory) Company identifier"),
+     *             @OA\Property(property="environment", type="string", enum={"sandbox","production"}, description="(mandatory) Environment type"),
      *             @OA\Property(property="page", type="integer", default=1, description="Page number for pagination"),
      *             @OA\Property(property="pageSize", type="integer", default=50, description="Number of records per page (max 1000)"),
      *             @OA\Property(property="customerId", type="string", description="Filter by customer internal ID"),

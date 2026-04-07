@@ -10,7 +10,7 @@
     },
     "servers": [
         {
-            "url": "https://netsuiteintegrator.dynamicsserv.com:4140/api/truefoods-sanifu",
+            "url": "https://netsuiteintegrator.dynamicsserv.com:4140",
             "description": "Production Server"
         }
     ],
@@ -34,13 +34,13 @@
                                 ],
                                 "properties": {
                                     "email": {
-                                        "description": "User email address",
+                                        "description": "(mandatory) User email address",
                                         "type": "string",
                                         "format": "email",
                                         "example": "admin@example.com"
                                     },
                                     "password": {
-                                        "description": "User password",
+                                        "description": "(mandatory) User password",
                                         "type": "string",
                                         "example": "password123"
                                     }
@@ -60,19 +60,19 @@
                 }
             }
         },
-        "/get/customers": {
+        "/api/truefoods-sanifu/get/customers": {
             "post": {
                 "tags": [
                     "Customers"
                 ],
                 "summary": "Get Customers",
                 "description": "Retrieve a paginated list of customers with optional filters",
-                "operationId": "cee39241610804591a21992965078cd6",
+                "operationId": "f77e7776dc6e85b6fc5722d114396172",
                 "parameters": [
                     {
                         "name": "company_id",
                         "in": "query",
-                        "description": "Company identifier",
+                        "description": "(mandatory) Company identifier",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -82,7 +82,7 @@
                     {
                         "name": "environment",
                         "in": "query",
-                        "description": "Environment type",
+                        "description": "(mandatory) Environment type",
                         "required": true,
                         "schema": {
                             "type": "string",
@@ -163,19 +163,19 @@
                 }
             }
         },
-        "/get/customer-purchases": {
+        "/api/truefoods-sanifu/get/customer-purchases": {
             "post": {
                 "tags": [
                     "Customers"
                 ],
                 "summary": "Get Customer Purchases",
                 "description": "Retrieve purchase history for a specific customer",
-                "operationId": "fd9e0a69c95c7cddc167e9716aa523e2",
+                "operationId": "e51c4b56493e6a57ca209e4148f21e9e",
                 "parameters": [
                     {
                         "name": "company_id",
                         "in": "query",
-                        "description": "Company identifier",
+                        "description": "(mandatory) Company identifier",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -185,7 +185,7 @@
                     {
                         "name": "environment",
                         "in": "query",
-                        "description": "Environment type",
+                        "description": "(mandatory) Environment type",
                         "required": true,
                         "schema": {
                             "type": "string",
@@ -221,7 +221,7 @@
                     {
                         "name": "customerId",
                         "in": "query",
-                        "description": "Customer ID to retrieve purchases for",
+                        "description": "(mandatory) Customer ID to retrieve purchases for",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -280,19 +280,19 @@
                 }
             }
         },
-        "/create/sales-order": {
+        "/api/truefoods-sanifu/create/sales-order": {
             "post": {
                 "tags": [
                     "Sales Orders"
                 ],
                 "summary": "Create Sales Order",
                 "description": "Create a new sales order",
-                "operationId": "d0e09455c7487687407415008a8c600d",
+                "operationId": "994b5c6c7cf96b1b1b23ed4a83a107de",
                 "parameters": [
                     {
                         "name": "company_id",
                         "in": "query",
-                        "description": "Company identifier",
+                        "description": "(mandatory) Company identifier",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -302,7 +302,7 @@
                     {
                         "name": "environment",
                         "in": "query",
-                        "description": "Environment type",
+                        "description": "(mandatory) Environment type",
                         "required": true,
                         "schema": {
                             "type": "string",
@@ -333,11 +333,11 @@
                                 ],
                                 "properties": {
                                     "company_id": {
-                                        "description": "Company identifier",
+                                        "description": "(mandatory) Company identifier",
                                         "type": "integer"
                                     },
                                     "environment": {
-                                        "description": "Environment type",
+                                        "description": "(mandatory) Environment type",
                                         "type": "string",
                                         "enum": [
                                             "sandbox",
@@ -345,11 +345,11 @@
                                         ]
                                     },
                                     "customerId": {
-                                        "description": "Customer ID for the order",
+                                        "description": "(mandatory) Customer ID for the order",
                                         "type": "integer"
                                     },
                                     "status": {
-                                        "description": "Order status",
+                                        "description": "(mandatory) Order status",
                                         "type": "string",
                                         "enum": [
                                             "A",
@@ -361,7 +361,7 @@
                                         "type": "string"
                                     },
                                     "tranDate": {
-                                        "description": "Transaction date (YYYY-MM-DD)",
+                                        "description": "(mandatory) Transaction date (YYYY-MM-DD)",
                                         "type": "string",
                                         "format": "date"
                                     },
@@ -371,12 +371,12 @@
                                         "format": "date"
                                     },
                                     "shipDate": {
-                                        "description": "Ship date (YYYY-MM-DD)",
+                                        "description": "(mandatory) Ship date (YYYY-MM-DD)",
                                         "type": "string",
                                         "format": "date"
                                     },
                                     "otherRefNum": {
-                                        "description": "External reference number (e.g., PO number)",
+                                        "description": "(mandatory) External reference number (e.g., PO number)",
                                         "type": "string"
                                     },
                                     "terms": {
@@ -388,7 +388,7 @@
                                         "type": "integer"
                                     },
                                     "department": {
-                                        "description": "Department ID",
+                                        "description": "(mandatory) Department ID",
                                         "type": "integer"
                                     },
                                     "classId": {
@@ -396,7 +396,7 @@
                                         "type": "integer"
                                     },
                                     "location": {
-                                        "description": "Location ID",
+                                        "description": "(mandatory) Location ID",
                                         "type": "integer"
                                     },
                                     "salesType": {
@@ -416,6 +416,7 @@
                                         "type": "string"
                                     },
                                     "items": {
+                                        "description": "(mandatory) Line items for the order",
                                         "type": "array",
                                         "items": {
                                             "required": [
@@ -426,11 +427,11 @@
                                             ],
                                             "properties": {
                                                 "itemId": {
-                                                    "description": "Item ID",
+                                                    "description": "(mandatory) Item ID",
                                                     "type": "integer"
                                                 },
                                                 "quantity": {
-                                                    "description": "Quantity",
+                                                    "description": "(mandatory) Quantity",
                                                     "type": "integer"
                                                 },
                                                 "rate": {
@@ -446,11 +447,11 @@
                                                     "type": "string"
                                                 },
                                                 "taxCode": {
-                                                    "description": "Tax code ID",
+                                                    "description": "(mandatory) Tax code ID",
                                                     "type": "integer"
                                                 },
                                                 "location": {
-                                                    "description": "Item location ID",
+                                                    "description": "(mandatory) Item location ID",
                                                     "type": "integer"
                                                 }
                                             },
@@ -476,19 +477,19 @@
                 }
             }
         },
-        "/update/sales-order": {
+        "/api/truefoods-sanifu/update/sales-order": {
             "post": {
                 "tags": [
                     "Sales Orders"
                 ],
                 "summary": "Update Sales Order",
                 "description": "Update an existing sales order",
-                "operationId": "24d837ef5937ef656606ab351738ec88",
+                "operationId": "346257196cd9b699d21819790b26f0f9",
                 "parameters": [
                     {
                         "name": "company_id",
                         "in": "query",
-                        "description": "Company identifier",
+                        "description": "(mandatory) Company identifier",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -498,7 +499,7 @@
                     {
                         "name": "environment",
                         "in": "query",
-                        "description": "Environment type",
+                        "description": "(mandatory) Environment type",
                         "required": true,
                         "schema": {
                             "type": "string",
@@ -512,7 +513,7 @@
                     {
                         "name": "orderId",
                         "in": "query",
-                        "description": "Sales order ID to update",
+                        "description": "(mandatory) Sales order ID to update",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -582,6 +583,7 @@
                                         "type": "integer"
                                     },
                                     "items": {
+                                        "description": "Line items to update",
                                         "type": "array",
                                         "items": {
                                             "required": [
@@ -589,7 +591,7 @@
                                             ],
                                             "properties": {
                                                 "line": {
-                                                    "description": "Line number to update",
+                                                    "description": "(mandatory) Line number to update",
                                                     "type": "integer"
                                                 },
                                                 "quantity": {
@@ -642,14 +644,14 @@
                 }
             }
         },
-        "/get/shipping-addresses": {
+        "/api/truefoods-sanifu/get/shipping-addresses": {
             "post": {
                 "tags": [
                     "Customers"
                 ],
                 "summary": "Get Shipping Addresses",
                 "description": "Retrieve a paginated list of shipping addresses with optional filters",
-                "operationId": "f72c3e3af1deda4075dec1e57f48e90f",
+                "operationId": "8802a4bb0d77a56187f5ec21fc075f9e",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -661,11 +663,11 @@
                                 ],
                                 "properties": {
                                     "company_id": {
-                                        "description": "Company identifier",
+                                        "description": "(mandatory) Company identifier",
                                         "type": "integer"
                                     },
                                     "environment": {
-                                        "description": "Environment type",
+                                        "description": "(mandatory) Environment type",
                                         "type": "string",
                                         "enum": [
                                             "sandbox",
@@ -717,19 +719,19 @@
                 }
             }
         },
-        "/get/items": {
+        "/api/truefoods-sanifu/get/items": {
             "post": {
                 "tags": [
                     "Items"
                 ],
                 "summary": "Get Items",
                 "description": "Retrieve a paginated list of items with optional filters",
-                "operationId": "1ac846214664084b83aed7a42fa8cc04",
+                "operationId": "ad2ecaddc98c7a97d3dac7e252f61906",
                 "parameters": [
                     {
                         "name": "company_id",
                         "in": "query",
-                        "description": "Company identifier",
+                        "description": "(mandatory) Company identifier",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -739,7 +741,7 @@
                     {
                         "name": "environment",
                         "in": "query",
-                        "description": "Environment type",
+                        "description": "(mandatory) Environment type",
                         "required": true,
                         "schema": {
                             "type": "string",
@@ -843,14 +845,14 @@
                 }
             }
         },
-        "/get/uom-conversion": {
+        "/api/truefoods-sanifu/get/uom-conversion": {
             "post": {
                 "tags": [
                     "Items"
                 ],
                 "summary": "Get UOM Conversion",
                 "description": "Get unit of measure conversion data. No parameters: Get all unit types. unitTypeId: Get all units for a specific unit type. unitTypeId + unitName: Get conversion rate for a specific unit. itemId: Get units from an item's unit type.",
-                "operationId": "70643dd353379c4c3529c699e9583548",
+                "operationId": "80d68219c05c4233e3a4c4a1551b7b6d",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -862,11 +864,11 @@
                                 ],
                                 "properties": {
                                     "company_id": {
-                                        "description": "Company identifier",
+                                        "description": "(mandatory) Company identifier",
                                         "type": "integer"
                                     },
                                     "environment": {
-                                        "description": "Environment type",
+                                        "description": "(mandatory) Environment type",
                                         "type": "string",
                                         "enum": [
                                             "sandbox",
