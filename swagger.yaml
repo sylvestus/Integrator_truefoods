@@ -407,6 +407,7 @@ paths:
               company_id: 6
               environment: sandbox
               customerId: 1378
+              status: "A"
               memo: "new"
               tranDate: "2026-03-30"
               dueDate: "2026-04-05"
@@ -615,6 +616,12 @@ components:
         - company_id
         - environment
         - customerId
+        - tranDate
+        - otherRefNum
+        - shipDate
+        - department
+        - location
+        - status
         - items
       properties:
         company_id:
@@ -627,6 +634,10 @@ components:
         customerId:
           type: integer
           description: Customer ID for the order
+        status:
+          type: string
+          enum: [A, B]
+          description: Order status
         memo:
           type: string
           description: Order memo/notes
@@ -737,6 +748,8 @@ components:
       required:
         - itemId
         - quantity
+        - taxCode
+        - location
       properties:
         itemId:
           type: integer
