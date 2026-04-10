@@ -873,8 +873,8 @@ class SanifuCustomersController extends Controller
 
             // Build URL with query parameters
             $url = "https://" . $account_number . ".restlets.api.netsuite.com/app/site/hosting/restlet.nl"
-                . "?script=customscript_ss_rl_get_shipping_addresses"
-                . "&deploy=customdeploy_ss_rl_get_shipping_addresses"
+                . "?script=customscript_ss_rl_get_shipping_address"
+                . "&deploy=customdeploy_ss_rl_get_shipping_address"
                 . "&page=" . $page
                 . "&pageSize=" . $pageSize;
 
