@@ -422,6 +422,7 @@ paths:
               channel: 2
               region: 3
               widgetLink: "https://example.com/widget/123"
+              shipTo: 1234
               items:
                 - itemId: 355
                   quantity: 2
