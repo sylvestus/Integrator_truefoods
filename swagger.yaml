@@ -683,6 +683,9 @@ components:
         widgetLink:
           type: string
           description: Widget link URL
+        shipTo:
+          type: integer
+          description: Internal ID of an address from the customer's address book to ship this order to (maps to NetSuite shipaddresslist)
         items:
           type: array
           items:

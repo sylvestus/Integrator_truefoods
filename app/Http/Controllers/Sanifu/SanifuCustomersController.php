@@ -476,6 +476,11 @@ class SanifuCustomersController extends Controller
                 $requestBody['currency'] = $request->currency;
             }
 
+            // Ship-to: customer address book internal ID
+            if ($request->has('shipTo')) {
+                $requestBody['shipTo'] = $request->shipTo;
+            }
+
             // Add optional shipping address fields
             if ($request->has('shipAddress')) {
                 $requestBody['shipAddress'] = $request->shipAddress;
