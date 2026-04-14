@@ -344,6 +344,7 @@ class SanifuCustomersController extends Controller
      *             @OA\Property(property="memo", type="string", description="Order memo/notes"),
      *             @OA\Property(property="tranDate", type="string", format="date", description="(mandatory) Transaction date (YYYY-MM-DD)"),
      *             @OA\Property(property="dueDate", type="string", format="date", description="Due date (YYYY-MM-DD)"),
+     *             @OA\Property(property="shipTo", type="integer", description="Internal ID of an address from the customer's address book (maps to NetSuite shipaddresslist)"),
      *             @OA\Property(property="shipDate", type="string", format="date", description="(mandatory) Ship date (YYYY-MM-DD)"),
      *             @OA\Property(property="otherRefNum", type="string", description="(mandatory) External reference number (e.g., PO number)"),
      *             @OA\Property(property="terms", type="integer", description="Payment terms ID"),

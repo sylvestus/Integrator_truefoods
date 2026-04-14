@@ -411,6 +411,7 @@ paths:
               memo: "new"
               tranDate: "2026-03-30"
               dueDate: "2026-04-05"
+              shipTo: 1234
               shipDate: "2026-03-31"
               otherRefNum: "PO-12345"
               terms: 3
@@ -422,7 +423,6 @@ paths:
               channel: 2
               region: 3
               widgetLink: "https://example.com/widget/123"
-              shipTo: 1234
               items:
                 - itemId: 355
                   quantity: 2
@@ -650,6 +650,9 @@ components:
           type: string
           format: date
           description: Due date (YYYY-MM-DD)
+        shipTo:
+          type: integer
+          description: Internal ID of an address from the customer's address book to ship this order to (maps to NetSuite shipaddresslist)
         shipDate:
           type: string
           format: date
@@ -684,9 +687,6 @@ components:
         widgetLink:
           type: string
           description: Widget link URL
-        shipTo:
-          type: integer
-          description: Internal ID of an address from the customer's address book to ship this order to (maps to NetSuite shipaddresslist)
         items:
           type: array
           items:

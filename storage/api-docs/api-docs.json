@@ -380,6 +380,10 @@
                                         "type": "string",
                                         "format": "date"
                                     },
+                                    "shipTo": {
+                                        "description": "Internal ID of an address from the customer's address book (maps to NetSuite shipaddresslist)",
+                                        "type": "integer"
+                                    },
                                     "shipDate": {
                                         "description": "(mandatory) Ship date (YYYY-MM-DD)",
                                         "type": "string",
