@@ -22,6 +22,8 @@ tags:
     description: Customer management endpoints
   - name: Sales Orders
     description: Sales order management endpoints
+  - name: Estimates
+    description: Estimate (quote) management endpoints
 
 paths:
   /api/login:
@@ -514,6 +516,137 @@ paths:
         '500':
           description: Internal server error
 
+  /get/estimates:
+    post:
+      tags:
+        - Estimates
+      summary: Get Estimates
+      description: Retrieve a paginated list of estimates with optional filters
+      parameters:
+        - name: company_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          example: 6
+          description: Company identifier
+        - name: environment
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [sandbox, production]
+          example: sandbox
+          description: Environment type
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+          example: 1
+          description: Page number for pagination
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 50
+          example: 50
+          description: Number of records per page
+        - name: estimateId
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by specific estimate internal ID
+        - name: tranId
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by estimate document number
+        - name: customerId
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by customer internal ID
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by estimate status (e.g. open, voided, expired)
+        - name: dateFrom
+          in: query
+          required: false
+          schema:
+            type: string
+          example: "01/03/2026"
+          description: Start date filter (DD/MM/YYYY format)
+        - name: dateTo
+          in: query
+          required: false
+          schema:
+            type: string
+          example: "30/03/2026"
+          description: End date filter (DD/MM/YYYY format)
+        - name: subsidiary
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by subsidiary internal ID
+        - name: department
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by department internal ID
+        - name: location
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by location internal ID
+        - name: salesRep
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by sales rep internal ID
+        - name: minAmount
+          in: query
+          required: false
+          schema:
+            type: number
+          description: Minimum estimate total amount
+        - name: maxAmount
+          in: query
+          required: false
+          schema:
+            type: number
+          description: Maximum estimate total amount
+        - name: includeLineItems
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: true
+          description: Include line items in the response
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EstimatesResponse'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+
 components:
   schemas:
     ItemsResponse:
@@ -610,6 +743,87 @@ components:
         total:
           type: number
           description: Total amount
+
+    EstimatesResponse:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          example: 200
+        response:
+          type: string
+          example: Success
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Estimate'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    Estimate:
+      type: object
+      properties:
+        estimateId:
+          type: integer
+          description: Estimate internal ID
+        tranId:
+          type: string
+          description: Estimate document number
+        tranDate:
+          type: string
+          description: Transaction date
+        customerId:
+          type: integer
+          description: Customer internal ID
+        customerName:
+          type: string
+          description: Customer name
+        status:
+          type: string
+          description: Estimate status (e.g. open, voided, expired)
+        memo:
+          type: string
+          description: Estimate memo/notes
+        subsidiary:
+          type: integer
+          description: Subsidiary internal ID
+        department:
+          type: integer
+          description: Department internal ID
+        location:
+          type: integer
+          description: Location internal ID
+        salesRep:
+          type: integer
+          description: Sales rep internal ID
+        currency:
+          type: string
+          description: Currency code
+        total:
+          type: number
+          description: Estimate total amount
+        items:
+          type: array
+          description: Line items (omitted if includeLineItems is false)
+          items:
+            type: object
+            properties:
+              line:
+                type: integer
+              itemId:
+                type: integer
+              description:
+                type: string
+              quantity:
+                type: number
+              rate:
+                type: number
+              amount:
+                type: number
+              taxCode:
+                type: integer
+              location:
+                type: integer
 
     CreateSalesOrderRequest:
       type: object

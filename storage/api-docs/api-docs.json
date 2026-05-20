@@ -748,6 +748,200 @@
                 ]
             }
         },
+        "/api/truefoods-sanifu/get/estimates": {
+            "post": {
+                "tags": [
+                    "Estimates"
+                ],
+                "summary": "Get Estimates",
+                "description": "Retrieve a paginated list of estimates with optional filters",
+                "operationId": "aa06c42c6a6e174341224cedfb6c018e",
+                "parameters": [
+                    {
+                        "name": "company_id",
+                        "in": "query",
+                        "description": "(mandatory) Company identifier",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 6
+                    },
+                    {
+                        "name": "environment",
+                        "in": "query",
+                        "description": "(mandatory) Environment type",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "sandbox",
+                                "production"
+                            ]
+                        },
+                        "example": "sandbox"
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number for pagination",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        },
+                        "example": 1
+                    },
+                    {
+                        "name": "pageSize",
+                        "in": "query",
+                        "description": "Number of records per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 50
+                        },
+                        "example": 50
+                    },
+                    {
+                        "name": "estimateId",
+                        "in": "query",
+                        "description": "Filter by specific estimate internal ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "tranId",
+                        "in": "query",
+                        "description": "Filter by estimate document number",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "customerId",
+                        "in": "query",
+                        "description": "Filter by customer internal ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Filter by estimate status (e.g. open, voided, expired)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "dateFrom",
+                        "in": "query",
+                        "description": "Start date filter (DD/MM/YYYY format)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "01/03/2026"
+                    },
+                    {
+                        "name": "dateTo",
+                        "in": "query",
+                        "description": "End date filter (DD/MM/YYYY format)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "30/03/2026"
+                    },
+                    {
+                        "name": "subsidiary",
+                        "in": "query",
+                        "description": "Filter by subsidiary internal ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "department",
+                        "in": "query",
+                        "description": "Filter by department internal ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "location",
+                        "in": "query",
+                        "description": "Filter by location internal ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "salesRep",
+                        "in": "query",
+                        "description": "Filter by sales rep internal ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "minAmount",
+                        "in": "query",
+                        "description": "Minimum estimate total amount",
+                        "required": false,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "maxAmount",
+                        "in": "query",
+                        "description": "Maximum estimate total amount",
+                        "required": false,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "includeLineItems",
+                        "in": "query",
+                        "description": "Include line items in the response",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/truefoods-sanifu/get/items": {
             "post": {
                 "tags": [
@@ -972,6 +1166,10 @@
         {
             "name": "Sales Orders",
             "description": "Sales order management endpoints"
+        },
+        {
+            "name": "Estimates",
+            "description": "Estimates"
         }
     ]
 }
