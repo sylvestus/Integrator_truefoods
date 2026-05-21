@@ -942,6 +942,222 @@
                 ]
             }
         },
+        "/api/truefoods-sanifu/create/estimate": {
+            "post": {
+                "tags": [
+                    "Estimates"
+                ],
+                "summary": "Create Estimate",
+                "description": "Create a new estimate (quote)",
+                "operationId": "18d2d33b222092ccb896884f3822cc68",
+                "parameters": [
+                    {
+                        "name": "company_id",
+                        "in": "query",
+                        "description": "(mandatory) Company identifier",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 6
+                    },
+                    {
+                        "name": "environment",
+                        "in": "query",
+                        "description": "(mandatory) Environment type",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "sandbox",
+                                "production"
+                            ]
+                        },
+                        "example": "sandbox"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "company_id",
+                                    "environment",
+                                    "customerId",
+                                    "tranDate",
+                                    "department",
+                                    "location",
+                                    "items"
+                                ],
+                                "properties": {
+                                    "company_id": {
+                                        "description": "(mandatory) Company identifier",
+                                        "type": "integer"
+                                    },
+                                    "environment": {
+                                        "description": "(mandatory) Environment type",
+                                        "type": "string",
+                                        "enum": [
+                                            "sandbox",
+                                            "production"
+                                        ]
+                                    },
+                                    "customerId": {
+                                        "description": "(mandatory) Customer ID for the estimate",
+                                        "type": "integer"
+                                    },
+                                    "entityStatus": {
+                                        "description": "Estimate status internal ID (e.g. open, voided, expired)",
+                                        "type": "integer"
+                                    },
+                                    "memo": {
+                                        "description": "Estimate memo/notes",
+                                        "type": "string"
+                                    },
+                                    "tranDate": {
+                                        "description": "(mandatory) Transaction date (YYYY-MM-DD)",
+                                        "type": "string",
+                                        "format": "date"
+                                    },
+                                    "expectedCloseDate": {
+                                        "description": "Expected close date (YYYY-MM-DD)",
+                                        "type": "string",
+                                        "format": "date"
+                                    },
+                                    "dueDate": {
+                                        "description": "Due date (YYYY-MM-DD)",
+                                        "type": "string",
+                                        "format": "date"
+                                    },
+                                    "shipTo": {
+                                        "description": "Internal ID of an address from the customer's address book (maps to NetSuite shipaddresslist)",
+                                        "type": "integer"
+                                    },
+                                    "shipDate": {
+                                        "description": "Ship date (YYYY-MM-DD)",
+                                        "type": "string",
+                                        "format": "date"
+                                    },
+                                    "otherRefNum": {
+                                        "description": "External reference number (e.g., PO number)",
+                                        "type": "string"
+                                    },
+                                    "terms": {
+                                        "description": "Payment terms ID",
+                                        "type": "integer"
+                                    },
+                                    "salesRep": {
+                                        "description": "Sales representative ID",
+                                        "type": "integer"
+                                    },
+                                    "department": {
+                                        "description": "(mandatory) Department ID",
+                                        "type": "integer"
+                                    },
+                                    "classId": {
+                                        "description": "Class ID",
+                                        "type": "integer"
+                                    },
+                                    "location": {
+                                        "description": "(mandatory) Location ID",
+                                        "type": "integer"
+                                    },
+                                    "subsidiary": {
+                                        "description": "Subsidiary ID",
+                                        "type": "integer"
+                                    },
+                                    "currency": {
+                                        "description": "Currency ID",
+                                        "type": "integer"
+                                    },
+                                    "salesType": {
+                                        "description": "Sales type ID",
+                                        "type": "integer"
+                                    },
+                                    "channel": {
+                                        "description": "Sales channel ID",
+                                        "type": "integer"
+                                    },
+                                    "region": {
+                                        "description": "Region ID",
+                                        "type": "integer"
+                                    },
+                                    "widgetLink": {
+                                        "description": "Widget link URL",
+                                        "type": "string"
+                                    },
+                                    "probability": {
+                                        "description": "Probability of close (0-100)",
+                                        "type": "number"
+                                    },
+                                    "items": {
+                                        "description": "(mandatory) Line items for the estimate",
+                                        "type": "array",
+                                        "items": {
+                                            "required": [
+                                                "itemId",
+                                                "quantity",
+                                                "taxCode",
+                                                "location"
+                                            ],
+                                            "properties": {
+                                                "itemId": {
+                                                    "description": "(mandatory) Item ID",
+                                                    "type": "integer"
+                                                },
+                                                "quantity": {
+                                                    "description": "(mandatory) Quantity",
+                                                    "type": "integer"
+                                                },
+                                                "rate": {
+                                                    "description": "Unit price",
+                                                    "type": "number"
+                                                },
+                                                "amount": {
+                                                    "description": "Line total amount",
+                                                    "type": "number"
+                                                },
+                                                "description": {
+                                                    "description": "Line item description",
+                                                    "type": "string"
+                                                },
+                                                "taxCode": {
+                                                    "description": "(mandatory) Tax code ID",
+                                                    "type": "integer"
+                                                },
+                                                "location": {
+                                                    "description": "(mandatory) Item location ID",
+                                                    "type": "integer"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Estimate created successfully"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/truefoods-sanifu/get/items": {
             "post": {
                 "tags": [

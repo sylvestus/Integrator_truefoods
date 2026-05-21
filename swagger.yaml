@@ -516,6 +516,75 @@ paths:
         '500':
           description: Internal server error
 
+  /create/estimate:
+    post:
+      tags:
+        - Estimates
+      summary: Create Estimate
+      description: Create a new estimate (quote)
+      parameters:
+        - name: company_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          example: 6
+          description: Company identifier
+        - name: environment
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [sandbox, production]
+          example: sandbox
+          description: Environment type
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateEstimateRequest'
+            example:
+              company_id: 6
+              environment: sandbox
+              customerId: 1378
+              memo: "Quote for Q2 order"
+              tranDate: "2026-05-21"
+              expectedCloseDate: "2026-06-15"
+              dueDate: "2026-06-30"
+              shipTo: 1234
+              shipDate: "2026-06-20"
+              otherRefNum: "PO-EST-12345"
+              terms: 3
+              salesRep: 1307
+              department: 2
+              classId: 1
+              location: 5
+              salesType: 1
+              channel: 2
+              region: 3
+              widgetLink: "https://example.com/widget/123"
+              probability: 75
+              items:
+                - itemId: 355
+                  quantity: 2
+                  rate: 500
+                  amount: 1000
+                  description: "Burger"
+                  taxCode: 7
+                  location: 5
+      responses:
+        '200':
+          description: Estimate created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EstimateResponse'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+
   /get/estimates:
     post:
       tags:
@@ -824,6 +893,121 @@ components:
                 type: integer
               location:
                 type: integer
+
+    CreateEstimateRequest:
+      type: object
+      required:
+        - company_id
+        - environment
+        - customerId
+        - tranDate
+        - department
+        - location
+        - items
+      properties:
+        company_id:
+          type: integer
+          description: Company identifier
+        environment:
+          type: string
+          enum: [sandbox, production]
+          description: Environment type
+        customerId:
+          type: integer
+          description: Customer ID for the estimate
+        entityStatus:
+          type: integer
+          description: Estimate status internal ID (e.g. open, voided, expired)
+        memo:
+          type: string
+          description: Estimate memo/notes
+        tranDate:
+          type: string
+          format: date
+          description: Transaction date (YYYY-MM-DD)
+        expectedCloseDate:
+          type: string
+          format: date
+          description: Expected close date (YYYY-MM-DD)
+        dueDate:
+          type: string
+          format: date
+          description: Due date (YYYY-MM-DD)
+        shipTo:
+          type: integer
+          description: Internal ID of an address from the customer's address book (maps to NetSuite shipaddresslist)
+        shipDate:
+          type: string
+          format: date
+          description: Ship date (YYYY-MM-DD)
+        otherRefNum:
+          type: string
+          description: External reference number (e.g., PO number)
+        terms:
+          type: integer
+          description: Payment terms ID
+        salesRep:
+          type: integer
+          description: Sales representative ID
+        department:
+          type: integer
+          description: Department ID
+        classId:
+          type: integer
+          description: Class ID
+        location:
+          type: integer
+          description: Location ID
+        subsidiary:
+          type: integer
+          description: Subsidiary ID
+        currency:
+          type: integer
+          description: Currency ID
+        salesType:
+          type: integer
+          description: Sales type ID
+        channel:
+          type: integer
+          description: Sales channel ID
+        region:
+          type: integer
+          description: Region ID
+        widgetLink:
+          type: string
+          description: Widget link URL
+        probability:
+          type: number
+          description: Probability of close (0-100)
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/SalesOrderItem'
+          description: Line items for the estimate
+
+    EstimateResponse:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          example: 200
+        response:
+          type: string
+          example: Success
+        data:
+          type: object
+          properties:
+            success:
+              type: boolean
+            estimateId:
+              type: integer
+              description: Created estimate internal ID
+            tranId:
+              type: string
+              description: Estimate document number
+            message:
+              type: string
+              description: Status message
 
     CreateSalesOrderRequest:
       type: object
