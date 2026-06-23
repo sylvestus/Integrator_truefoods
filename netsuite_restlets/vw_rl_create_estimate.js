@@ -40,8 +40,8 @@
  *       "rate":        500,
  *       "amount":      1000,
  *       "description": "Burger",
- *       "taxCode":     7,
  *       "location":    5
+ *       // NOTE: taxCode is ignored. Tax is sourced from the item's tax schedule.
  *     }
  *   ]
  * }
@@ -193,8 +193,11 @@ define(['N/record', 'N/log', 'N/error'], function (record, log, error) {
                 setSublistIfPresent(estimate, 'item', 'rate',        line.rate);
                 setSublistIfPresent(estimate, 'item', 'amount',      line.amount);
                 setSublistIfPresent(estimate, 'item', 'description', line.description);
-                setSublistIfPresent(estimate, 'item', 'taxcode',     line.taxCode);
                 setSublistIfPresent(estimate, 'item', 'location',    line.location);
+
+                // NOTE: taxcode is intentionally NOT set from the API payload.
+                // Selecting the item (above, in dynamic mode) lets NetSuite source
+                // the tax from the item's own tax schedule, which is the value we want.
 
                 estimate.commitLine({ sublistId: 'item' });
             });
