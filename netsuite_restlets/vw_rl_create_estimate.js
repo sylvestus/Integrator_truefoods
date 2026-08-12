@@ -249,17 +249,54 @@ define(['N/record', 'N/log', 'N/error'], function (record, log, error) {
 
     function setDateIfPresent(rec, fieldId, value) {
         if (value === undefined || value === null || value === '') return;
-        var d = new Date(value);
-        if (isNaN(d.getTime())) {
-            // Try DD/MM/YYYY
-            var parts = String(value).split('/');
-            if (parts.length === 3) {
-                d = new Date(parts[2] + '-' + parts[1] + '-' + parts[0]);
-            }
-        }
-        if (!isNaN(d.getTime())) {
+
+        var d = parseLocalDate(value);
+        if (d && !isNaN(d.getTime())) {
             rec.setValue({ fieldId: fieldId, value: d });
         }
+    }
+
+    /**
+     * Parse a date string into a Date at LOCAL (server) midnight.
+     *
+     * IMPORTANT: do not use `new Date('YYYY-MM-DD')` here. JavaScript parses a
+     * date-only ISO string as UTC midnight; when NetSuite renders it in the
+     * account/server timezone (any negative UTC offset) the date shifts back one
+     * day (e.g. 2026-06-18 saved as the 17th). Building the Date from explicit
+     * y/m/d numbers anchors it to local midnight, avoiding the shift.
+     *
+     * Supports "YYYY-MM-DD" and "DD/MM/YYYY".
+     *
+     * @param {string} value
+     * @returns {Date|null}
+     */
+    function parseLocalDate(value) {
+        var s = String(value).trim();
+        var y, m, day, parts;
+
+        // YYYY-MM-DD (optionally with a trailing time component)
+        if (/^\d{4}-\d{2}-\d{2}/.test(s)) {
+            parts = s.substring(0, 10).split('-');
+            y = parseInt(parts[0], 10);
+            m = parseInt(parts[1], 10) - 1;
+            day = parseInt(parts[2], 10);
+            return new Date(y, m, day);
+        }
+
+        // DD/MM/YYYY
+        if (s.indexOf('/') !== -1) {
+            parts = s.split('/');
+            if (parts.length === 3) {
+                day = parseInt(parts[0], 10);
+                m = parseInt(parts[1], 10) - 1;
+                y = parseInt(parts[2], 10);
+                return new Date(y, m, day);
+            }
+        }
+
+        // Fallback: let the engine try (e.g. full ISO datetimes)
+        var d = new Date(s);
+        return isNaN(d.getTime()) ? null : d;
     }
 
     function setSublistIfPresent(rec, sublistId, fieldId, value) {
