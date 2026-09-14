@@ -29,6 +29,17 @@ define(['N/record', 'N/error'], (record, error) => {
                 });
             }
 
+            // Reject the order if the same item appears on more than one line
+            const duplicates = findDuplicateItems(requestBody.items);
+            if (duplicates.length > 0) {
+                throw error.create({
+                    name: 'DUPLICATE_ITEM',
+                    message: 'Duplicate item(s) found in sales order: ' + duplicates.map((d) =>
+                        'itemId ' + d.itemId + ' at indexes ' + d.indexes.join(', ')
+                    ).join('; ')
+                });
+            }
+
             // Create the sales order
             const salesOrderRec = record.create({
                 type: record.Type.SALES_ORDER,
@@ -233,6 +244,27 @@ define(['N/record', 'N/error'], (record, error) => {
         setFieldSafely('custbody_widget_link', data.widgetLink);
 
         log.audit('Header fields set', 'Customer ID: ' + data.customerId);
+    };
+
+    /**
+     * Find items whose itemId appears more than once in the request
+     * @param {Array} items - Array of items from the request
+     * @returns {Array} [{ itemId, indexes }] for each duplicated itemId
+     */
+    const findDuplicateItems = (items) => {
+        const seen = {};
+
+        items.forEach((item, index) => {
+            if (!item || !item.itemId) {
+                return; // Missing itemId is reported by addLineItems
+            }
+            const key = String(item.itemId).trim();
+            (seen[key] = seen[key] || []).push(index);
+        });
+
+        return Object.keys(seen)
+            .filter((key) => seen[key].length > 1)
+            .map((key) => ({ itemId: key, indexes: seen[key] }));
     };
 
     /**
