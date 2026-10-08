@@ -139,6 +139,7 @@ define(['N/record', 'N/log', 'N/error'], function (record, log, error) {
             setIfPresent(estimate, 'memo',              requestBody.memo);
             setIfPresent(estimate, 'tranid',            requestBody.tranId);
             setIfPresent(estimate, 'otherrefnum',       requestBody.otherRefNum);
+            setIfPresent(estimate, 'externalid',        requestBody.otherRefNum);
             setIfPresent(estimate, 'terms',             requestBody.terms);
             setIfPresent(estimate, 'salesrep',          requestBody.salesRep);
             setIfPresent(estimate, 'department',        requestBody.department);

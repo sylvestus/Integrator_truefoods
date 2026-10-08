@@ -60,6 +60,176 @@
                 }
             }
         },
+        "/api/truefoods-sanifu/get/accounts": {
+            "post": {
+                "tags": [
+                    "Accounts"
+                ],
+                "summary": "Get Accounts",
+                "description": "Retrieve a paginated list of GL accounts. By default only active, non-summary expense-type accounts (Expense, OthExpense, COGS) used for vendor services are returned",
+                "operationId": "4520b9c014a435c128a0c01eaea07239",
+                "parameters": [
+                    {
+                        "name": "company_id",
+                        "in": "query",
+                        "description": "(mandatory) Company identifier",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 6
+                    },
+                    {
+                        "name": "environment",
+                        "in": "query",
+                        "description": "(mandatory) Environment type",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "sandbox",
+                                "production"
+                            ]
+                        },
+                        "example": "sandbox"
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number for pagination",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        },
+                        "example": 1
+                    },
+                    {
+                        "name": "pageSize",
+                        "in": "query",
+                        "description": "Number of records per page (max 1000)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 50
+                        },
+                        "example": 50
+                    },
+                    {
+                        "name": "accountId",
+                        "in": "query",
+                        "description": "Filter by specific account internal ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "number",
+                        "in": "query",
+                        "description": "Filter by account number (starts with)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "Filter by account name or full name (contains)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "accountType",
+                        "in": "query",
+                        "description": "Comma-separated account type codes (e.g. Expense, OthExpense, COGS, DeferExpense, OthCurrAsset, FixedAsset)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "Expense,OthExpense,COGS"
+                        },
+                        "example": "Expense,OthExpense,COGS"
+                    },
+                    {
+                        "name": "allTypes",
+                        "in": "query",
+                        "description": "Return accounts of every type (overrides accountType)",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "default": false
+                        }
+                    },
+                    {
+                        "name": "subsidiary",
+                        "in": "query",
+                        "description": "Filter by subsidiary internal ID (accounts available to that subsidiary)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "parent",
+                        "in": "query",
+                        "description": "Filter by parent account internal ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "includeSummary",
+                        "in": "query",
+                        "description": "Also return summary (non-posting header) accounts",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "default": false
+                        }
+                    },
+                    {
+                        "name": "isInactive",
+                        "in": "query",
+                        "description": "true returns only inactive accounts, false (default) only active ones",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "default": false
+                        }
+                    },
+                    {
+                        "name": "includeInactive",
+                        "in": "query",
+                        "description": "Return both active and inactive accounts (overrides isInactive)",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "default": false
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/truefoods-sanifu/get/customers": {
             "post": {
                 "tags": [
@@ -1512,6 +1682,164 @@
                     }
                 ]
             }
+        },
+        "/api/truefoods-sanifu/get/vendors": {
+            "post": {
+                "tags": [
+                    "Vendors"
+                ],
+                "summary": "Get Vendors",
+                "description": "Retrieve a paginated list of vendors with optional filters",
+                "operationId": "ebc6fac2cb2e118a7ab1d306269bb24d",
+                "parameters": [
+                    {
+                        "name": "company_id",
+                        "in": "query",
+                        "description": "(mandatory) Company identifier",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 6
+                    },
+                    {
+                        "name": "environment",
+                        "in": "query",
+                        "description": "(mandatory) Environment type",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "sandbox",
+                                "production"
+                            ]
+                        },
+                        "example": "sandbox"
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number for pagination",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        },
+                        "example": 1
+                    },
+                    {
+                        "name": "pageSize",
+                        "in": "query",
+                        "description": "Number of records per page (max 1000)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 50
+                        },
+                        "example": 50
+                    },
+                    {
+                        "name": "vendorId",
+                        "in": "query",
+                        "description": "Filter by specific vendor internal ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "Filter by vendor ID, company name or display name (contains)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "description": "Filter by vendor email (contains)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "subsidiary",
+                        "in": "query",
+                        "description": "Filter by subsidiary internal ID (any subsidiary the vendor is assigned to)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "category",
+                        "in": "query",
+                        "description": "Filter by vendor category internal ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "currency",
+                        "in": "query",
+                        "description": "Filter by primary currency internal ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "isInactive",
+                        "in": "query",
+                        "description": "true returns only inactive vendors, false (default) only active ones",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "default": false
+                        }
+                    },
+                    {
+                        "name": "includeInactive",
+                        "in": "query",
+                        "description": "Return both active and inactive vendors (overrides isInactive)",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "default": false
+                        }
+                    },
+                    {
+                        "name": "includeAddress",
+                        "in": "query",
+                        "description": "Include the vendor default billing address block in the response",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -1542,12 +1870,20 @@
             "description": "Sales order management endpoints"
         },
         {
+            "name": "Accounts",
+            "description": "Accounts"
+        },
+        {
             "name": "Estimates",
             "description": "Estimates"
         },
         {
             "name": "Locations",
             "description": "Locations"
+        },
+        {
+            "name": "Vendors",
+            "description": "Vendors"
         }
     ]
 }

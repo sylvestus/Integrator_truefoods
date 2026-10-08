@@ -39,6 +39,8 @@ Route::middleware('auth:api')->group(function () {
     Route::post('truefoods-sanifu/get/estimates', [\App\Http\Controllers\Sanifu\SanifuEstimatesController::class, 'getEstimates']);
     Route::post('truefoods-sanifu/create/estimate', [\App\Http\Controllers\Sanifu\SanifuEstimatesController::class, 'createEstimate']);
     Route::post('truefoods-sanifu/get/locations', [\App\Http\Controllers\Sanifu\SanifuLocationsController::class, 'getLocations']);
+    Route::post('truefoods-sanifu/get/vendors', [\App\Http\Controllers\Sanifu\SanifuVendorsController::class, 'getVendors']);
+    Route::post('truefoods-sanifu/get/accounts', [\App\Http\Controllers\Sanifu\SanifuAccountsController::class, 'getAccounts']);
 
 
     Route::post('sales_order', PostController::class);
