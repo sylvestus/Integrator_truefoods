@@ -30,6 +30,8 @@ tags:
     description: Vendor (supplier) endpoints
   - name: Accounts
     description: GL account endpoints (expense accounts for vendor services)
+  - name: Divisions
+    description: Division (NetSuite department) endpoints
 
 paths:
   /api/login:
@@ -1064,6 +1066,98 @@ paths:
         '500':
           description: Internal server error
 
+  /get/divisions:
+    post:
+      tags:
+        - Divisions
+      summary: Get Divisions
+      description: |
+        Retrieve a paginated list of divisions with optional filters.
+
+        Divisions are the NetSuite Department segment. Send the returned `divisionId`
+        as `department` when creating sales orders and estimates.
+      parameters:
+        - name: company_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          example: 6
+          description: Company identifier
+        - name: environment
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [sandbox, production]
+          example: sandbox
+          description: Environment type
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+          example: 1
+          description: Page number for pagination
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 50
+          example: 50
+          description: Number of records per page (max 1000)
+        - name: divisionId
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by specific division internal ID
+        - name: name
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by division name or full name (contains, case-insensitive)
+        - name: subsidiary
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by subsidiary internal ID (divisions available to that subsidiary)
+        - name: parent
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by parent division internal ID
+        - name: isInactive
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: false
+          description: true returns only inactive divisions, false (default) only active ones
+        - name: includeInactive
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: false
+          description: Return both active and inactive divisions (overrides isInactive)
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DivisionsResponse'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+
 components:
   schemas:
     ItemsResponse:
@@ -1513,6 +1607,53 @@ components:
         lastModifiedDate:
           type: string
           description: Date the account was last modified
+
+    DivisionsResponse:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          example: 200
+        response:
+          type: string
+          example: Success
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Division'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    Division:
+      type: object
+      properties:
+        divisionId:
+          type: integer
+          description: Division (department) internal ID - send as department on transactions
+        name:
+          type: string
+          description: Division name
+        fullName:
+          type: string
+          description: Full hierarchical name including the parent division
+        parent:
+          type: integer
+          description: Parent division internal ID (null for top level)
+        parentName:
+          type: string
+          description: Parent division name
+        subsidiary:
+          type: string
+          description: Subsidiary internal ID(s) the division is available to (comma-separated)
+        includeChildren:
+          type: boolean
+          description: Whether child subsidiaries can use this division
+        isInactive:
+          type: boolean
+          description: Whether the division is inactive
+        lastModifiedDate:
+          type: string
+          description: Date the division was last modified
 
     CreateEstimateRequest:
       type: object
