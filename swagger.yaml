@@ -32,6 +32,8 @@ tags:
     description: GL account endpoints (expense accounts for vendor services)
   - name: Divisions
     description: Division (NetSuite department) endpoints
+  - name: Cost Centers
+    description: Cost center (NetSuite class) endpoints
 
 paths:
   /api/login:
@@ -1158,6 +1160,98 @@ paths:
         '500':
           description: Internal server error
 
+  /get/cost-centers:
+    post:
+      tags:
+        - Cost Centers
+      summary: Get Cost Centers
+      description: |
+        Retrieve a paginated list of cost centers with optional filters.
+
+        Cost centers are the NetSuite Class segment. Send the returned `costCenterId`
+        as `classId` when creating sales orders and estimates.
+      parameters:
+        - name: company_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          example: 6
+          description: Company identifier
+        - name: environment
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [sandbox, production]
+          example: sandbox
+          description: Environment type
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+          example: 1
+          description: Page number for pagination
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 50
+          example: 50
+          description: Number of records per page (max 1000)
+        - name: costCenterId
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by specific cost center internal ID
+        - name: name
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by cost center name or full name (contains, case-insensitive)
+        - name: subsidiary
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by subsidiary internal ID (cost centers available to that subsidiary)
+        - name: parent
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by parent cost center internal ID
+        - name: isInactive
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: false
+          description: true returns only inactive cost centers, false (default) only active ones
+        - name: includeInactive
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: false
+          description: Return both active and inactive cost centers (overrides isInactive)
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CostCentersResponse'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+
 components:
   schemas:
     ItemsResponse:
@@ -1654,6 +1748,53 @@ components:
         lastModifiedDate:
           type: string
           description: Date the division was last modified
+
+    CostCentersResponse:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          example: 200
+        response:
+          type: string
+          example: Success
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/CostCenter'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    CostCenter:
+      type: object
+      properties:
+        costCenterId:
+          type: integer
+          description: Cost center (class) internal ID - send as classId on transactions
+        name:
+          type: string
+          description: Cost center name
+        fullName:
+          type: string
+          description: Full hierarchical name including the parent cost center
+        parent:
+          type: integer
+          description: Parent cost center internal ID (null for top level)
+        parentName:
+          type: string
+          description: Parent cost center name
+        subsidiary:
+          type: string
+          description: Subsidiary internal ID(s) the cost center is available to (comma-separated)
+        includeChildren:
+          type: boolean
+          description: Whether child subsidiaries can use this cost center
+        isInactive:
+          type: boolean
+          description: Whether the cost center is inactive
+        lastModifiedDate:
+          type: string
+          description: Date the cost center was last modified
 
     CreateEstimateRequest:
       type: object

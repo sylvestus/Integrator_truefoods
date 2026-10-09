@@ -230,6 +230,136 @@
                 ]
             }
         },
+        "/api/truefoods-sanifu/get/cost-centers": {
+            "post": {
+                "tags": [
+                    "Cost Centers"
+                ],
+                "summary": "Get Cost Centers",
+                "description": "Retrieve a paginated list of cost centers (NetSuite classes) with optional filters. Use costCenterId as the classId value on sales orders and estimates",
+                "operationId": "1ea0e55aedd8fdef41b97426480c175e",
+                "parameters": [
+                    {
+                        "name": "company_id",
+                        "in": "query",
+                        "description": "(mandatory) Company identifier",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 6
+                    },
+                    {
+                        "name": "environment",
+                        "in": "query",
+                        "description": "(mandatory) Environment type",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "sandbox",
+                                "production"
+                            ]
+                        },
+                        "example": "sandbox"
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number for pagination",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        },
+                        "example": 1
+                    },
+                    {
+                        "name": "pageSize",
+                        "in": "query",
+                        "description": "Number of records per page (max 1000)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 50
+                        },
+                        "example": 50
+                    },
+                    {
+                        "name": "costCenterId",
+                        "in": "query",
+                        "description": "Filter by specific cost center internal ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "Filter by cost center name or full name (contains)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "subsidiary",
+                        "in": "query",
+                        "description": "Filter by subsidiary internal ID (cost centers available to that subsidiary)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "parent",
+                        "in": "query",
+                        "description": "Filter by parent cost center internal ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "isInactive",
+                        "in": "query",
+                        "description": "true returns only inactive cost centers, false (default) only active ones",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "default": false
+                        }
+                    },
+                    {
+                        "name": "includeInactive",
+                        "in": "query",
+                        "description": "Return both active and inactive cost centers (overrides isInactive)",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "default": false
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/truefoods-sanifu/get/customers": {
             "post": {
                 "tags": [
@@ -2002,6 +2132,10 @@
         {
             "name": "Accounts",
             "description": "Accounts"
+        },
+        {
+            "name": "Cost Centers",
+            "description": "Cost Centers"
         },
         {
             "name": "Divisions",
