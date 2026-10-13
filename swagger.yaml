@@ -950,8 +950,8 @@ paths:
       description: |
         Retrieve a paginated list of GL accounts.
 
-        By default only active, non-summary expense-type accounts (`Expense`, `OthExpense`, `COGS`)
-        are returned - these are the accounts that vendor services are charged to on bills.
+        By default only active, non-summary `Expense` accounts are returned - these are
+        the accounts that vendor services are charged to on bills.
         Use `accountType` to request other types, or `allTypes=true` to return every account.
       parameters:
         - name: company_id
@@ -1010,8 +1010,8 @@ paths:
           required: false
           schema:
             type: string
-            default: Expense,OthExpense,COGS
-          example: Expense,OthExpense,COGS
+            default: Expense
+          example: Expense
           description: |
             Comma-separated account type codes. Common values: Expense, OthExpense, COGS,
             DeferExpense, OthCurrAsset, FixedAsset, OthAsset, AcctPay, OthCurrLiab,

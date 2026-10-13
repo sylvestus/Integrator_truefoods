@@ -2,8 +2,8 @@
  * vw_rl_get_accounts.js
  *
  * NetSuite RESTlet that returns a paginated list of GL Accounts for the
- * Truefoods/Sanifu Laravel integrator. By default it returns the expense-type
- * accounts that vendor services (bills / expense lines) are charged to.
+ * Truefoods/Sanifu Laravel integrator. By default it returns only Expense
+ * accounts, which vendor services (bills / expense lines) are charged to.
  *
  * Script ID:  customscript_vw_rl_get_accounts
  * Deploy ID:  customdeploy_vw_rl_get_accounts
@@ -17,7 +17,7 @@
  *   accountId         // Filter by account internal ID
  *   number            // Filter by account number (starts with)
  *   name              // Filter by account name / full name (contains, case-insensitive)
- *   accountType       // Comma-separated account type codes (default "Expense,OthExpense,COGS")
+ *   accountType       // Comma-separated account type codes (default "Expense")
  *                     //   e.g. Expense, OthExpense, COGS, DeferExpense, OthCurrAsset, FixedAsset,
  *                     //        AcctPay, OthCurrLiab, Bank, Income, ...
  *   allTypes          // true = ignore accountType and return accounts of every type
@@ -76,9 +76,9 @@ define(['N/query', 'N/log'], function (query, log) {
     var MAX_PAGE_SIZE = 1000;
 
     /**
-     * Account types used for vendor service / expense lines.
+     * Account type returned when no accountType is supplied (vendor service / expense lines).
      */
-    var DEFAULT_ACCOUNT_TYPES = ['Expense', 'OthExpense', 'COGS'];
+    var DEFAULT_ACCOUNT_TYPES = ['Expense'];
 
     var SELECT_COLUMNS =
         'a.id AS accountid, ' +
@@ -158,7 +158,7 @@ define(['N/query', 'N/log'], function (query, log) {
             values.push(nameFilter);
         }
 
-        // Account type handling: defaults to expense-type accounts unless allTypes is set.
+        // Account type handling: defaults to Expense accounts unless allTypes is set.
         if (!isTrue(params.allTypes)) {
             var types = isProvided(params.accountType)
                 ? String(params.accountType).split(',').map(function (t) { return t.trim(); }).filter(Boolean)

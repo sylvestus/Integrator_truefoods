@@ -66,7 +66,7 @@
                     "Accounts"
                 ],
                 "summary": "Get Accounts",
-                "description": "Retrieve a paginated list of GL accounts. By default only active, non-summary expense-type accounts (Expense, OthExpense, COGS) used for vendor services are returned",
+                "description": "Retrieve a paginated list of GL accounts. By default only active, non-summary Expense accounts (used for vendor services) are returned",
                 "operationId": "4520b9c014a435c128a0c01eaea07239",
                 "parameters": [
                     {
@@ -149,9 +149,9 @@
                         "required": false,
                         "schema": {
                             "type": "string",
-                            "default": "Expense,OthExpense,COGS"
+                            "default": "Expense"
                         },
-                        "example": "Expense,OthExpense,COGS"
+                        "example": "Expense"
                     },
                     {
                         "name": "allTypes",

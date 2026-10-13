@@ -19,13 +19,13 @@ class SanifuAccountsController extends Controller
 
     /**
      * Get GL accounts from NetSuite using vw_rl_get_accounts RESTlet.
-     * Defaults to the expense-type accounts used for vendor services.
+     * Defaults to Expense accounts, used for vendor services.
      *
      * @OA\Post(
      *     path="/api/truefoods-sanifu/get/accounts",
      *     tags={"Accounts"},
      *     summary="Get Accounts",
-     *     description="Retrieve a paginated list of GL accounts. By default only active, non-summary expense-type accounts (Expense, OthExpense, COGS) used for vendor services are returned",
+     *     description="Retrieve a paginated list of GL accounts. By default only active, non-summary Expense accounts (used for vendor services) are returned",
      *     @OA\Parameter(name="company_id", in="query", required=true, @OA\Schema(type="integer"), example=6, description="(mandatory) Company identifier"),
      *     @OA\Parameter(name="environment", in="query", required=true, @OA\Schema(type="string", enum={"sandbox","production"}), example="sandbox", description="(mandatory) Environment type"),
      *     @OA\Parameter(name="page", in="query", required=false, @OA\Schema(type="integer", default=1), example=1, description="Page number for pagination"),
@@ -33,7 +33,7 @@ class SanifuAccountsController extends Controller
      *     @OA\Parameter(name="accountId", in="query", required=false, @OA\Schema(type="integer"), description="Filter by specific account internal ID"),
      *     @OA\Parameter(name="number", in="query", required=false, @OA\Schema(type="string"), description="Filter by account number (starts with)"),
      *     @OA\Parameter(name="name", in="query", required=false, @OA\Schema(type="string"), description="Filter by account name or full name (contains)"),
-     *     @OA\Parameter(name="accountType", in="query", required=false, @OA\Schema(type="string", default="Expense,OthExpense,COGS"), example="Expense,OthExpense,COGS", description="Comma-separated account type codes (e.g. Expense, OthExpense, COGS, DeferExpense, OthCurrAsset, FixedAsset)"),
+     *     @OA\Parameter(name="accountType", in="query", required=false, @OA\Schema(type="string", default="Expense"), example="Expense", description="Comma-separated account type codes (e.g. Expense, OthExpense, COGS, DeferExpense, OthCurrAsset, FixedAsset)"),
      *     @OA\Parameter(name="allTypes", in="query", required=false, @OA\Schema(type="boolean", default=false), description="Return accounts of every type (overrides accountType)"),
      *     @OA\Parameter(name="subsidiary", in="query", required=false, @OA\Schema(type="integer"), description="Filter by subsidiary internal ID (accounts available to that subsidiary)"),
      *     @OA\Parameter(name="parent", in="query", required=false, @OA\Schema(type="integer"), description="Filter by parent account internal ID"),
