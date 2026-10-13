@@ -1252,6 +1252,126 @@ paths:
         '500':
           description: Internal server error
 
+  /get/raw-materials:
+    post:
+      tags:
+        - Items
+      summary: Get Raw Materials
+      description: |
+        Retrieve a paginated list of raw materials.
+
+        Raw materials are NetSuite Inventory Items only - assembly items (finished goods)
+        are excluded. Set `includeLocations=true` to get stock quantities per location.
+      parameters:
+        - name: company_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          example: 6
+          description: Company identifier
+        - name: environment
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [sandbox, production]
+          example: sandbox
+          description: Environment type
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+          example: 1
+          description: Page number for pagination
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 50
+          example: 50
+          description: Number of records per page (max 1000)
+        - name: itemId
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by specific item internal ID
+        - name: name
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by item code or display name (contains, case-insensitive)
+        - name: subsidiary
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by subsidiary internal ID (items available to that subsidiary)
+        - name: costCenter
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by cost center (class) internal ID
+        - name: division
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by division (department) internal ID
+        - name: location
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Limit the locations block (and inStockOnly) to this location internal ID
+        - name: inStockOnly
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: false
+          description: Only return items with quantity on hand above zero (at location, if given)
+        - name: isInactive
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: false
+          description: true returns only inactive items, false (default) only active ones
+        - name: includeInactive
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: false
+          description: Return both active and inactive items (overrides isInactive)
+        - name: includeLocations
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: false
+          description: |
+            Include per-location stock quantities. Without a location filter, only locations
+            with stock on hand or on order are listed.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RawMaterialsResponse'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+
 components:
   schemas:
     ItemsResponse:
@@ -1795,6 +1915,153 @@ components:
         lastModifiedDate:
           type: string
           description: Date the cost center was last modified
+
+    RawMaterialsResponse:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          example: 200
+        response:
+          type: string
+          example: Success
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/RawMaterial'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    RawMaterial:
+      type: object
+      properties:
+        itemId:
+          type: integer
+          description: Item internal ID
+        itemCode:
+          type: string
+          description: Item name/number as shown in NetSuite
+        displayName:
+          type: string
+          description: Display name
+        description:
+          type: string
+          description: Purchase description (falls back to the item description)
+        itemType:
+          type: string
+          description: NetSuite item type (always InvtPart)
+          example: InvtPart
+        upcCode:
+          type: string
+          description: UPC / barcode
+        unitsType:
+          type: integer
+          description: Units type internal ID
+        unitsTypeName:
+          type: string
+          description: Units type name
+        stockUnit:
+          type: integer
+          description: Stock unit internal ID
+        stockUnitName:
+          type: string
+          description: Stock unit name
+        purchaseUnit:
+          type: integer
+          description: Purchase unit internal ID
+        purchaseUnitName:
+          type: string
+          description: Purchase unit name
+        consumptionUnit:
+          type: integer
+          description: Consumption unit internal ID (unit used in production)
+        consumptionUnitName:
+          type: string
+          description: Consumption unit name
+        purchasePrice:
+          type: number
+          description: Purchase price set on the item
+        averageCost:
+          type: number
+          description: Average cost across locations
+        lastPurchasePrice:
+          type: number
+          description: Last purchase price
+        costingMethod:
+          type: string
+          description: Costing method (e.g. AVG, FIFO, STANDARD)
+        costCenter:
+          type: integer
+          description: Cost center (class) internal ID
+        costCenterName:
+          type: string
+          description: Cost center name
+        division:
+          type: integer
+          description: Division (department) internal ID
+        divisionName:
+          type: string
+          description: Division name
+        subsidiary:
+          type: string
+          description: Subsidiary internal ID(s) the item is available to (comma-separated)
+        assetAccount:
+          type: integer
+          description: Inventory asset account internal ID
+        assetAccountName:
+          type: string
+          description: Inventory asset account name
+        isInactive:
+          type: boolean
+          description: Whether the item is inactive
+        dateCreated:
+          type: string
+          description: Date the item was created
+        lastModifiedDate:
+          type: string
+          description: Date the item was last modified
+        locations:
+          type: array
+          description: Per-location stock (only when includeLocations is true)
+          items:
+            $ref: '#/components/schemas/RawMaterialLocation'
+
+    RawMaterialLocation:
+      type: object
+      properties:
+        locationId:
+          type: integer
+          description: Location internal ID
+        locationName:
+          type: string
+          description: Location name
+        quantityOnHand:
+          type: number
+          description: Quantity on hand (stock units)
+        quantityAvailable:
+          type: number
+          description: Quantity available
+        quantityOnOrder:
+          type: number
+          description: Quantity on open purchase orders
+        quantityCommitted:
+          type: number
+          description: Quantity committed to orders
+        quantityBackOrdered:
+          type: number
+          description: Quantity back ordered
+        averageCost:
+          type: number
+          description: Average cost at this location
+        lastPurchasePrice:
+          type: number
+          description: Last purchase price at this location
+        reorderPoint:
+          type: number
+          description: Reorder point at this location
+        preferredStockLevel:
+          type: number
+          description: Preferred stock level at this location
 
     CreateEstimateRequest:
       type: object

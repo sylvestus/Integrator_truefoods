@@ -1943,6 +1943,174 @@
                 ]
             }
         },
+        "/api/truefoods-sanifu/get/raw-materials": {
+            "post": {
+                "tags": [
+                    "Items"
+                ],
+                "summary": "Get Raw Materials",
+                "description": "Retrieve a paginated list of raw materials. Raw materials are NetSuite Inventory Items only; assembly items (finished goods) are excluded",
+                "operationId": "cf6af3a29a7fbacfd12873a80675c616",
+                "parameters": [
+                    {
+                        "name": "company_id",
+                        "in": "query",
+                        "description": "(mandatory) Company identifier",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 6
+                    },
+                    {
+                        "name": "environment",
+                        "in": "query",
+                        "description": "(mandatory) Environment type",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "sandbox",
+                                "production"
+                            ]
+                        },
+                        "example": "sandbox"
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number for pagination",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        },
+                        "example": 1
+                    },
+                    {
+                        "name": "pageSize",
+                        "in": "query",
+                        "description": "Number of records per page (max 1000)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 50
+                        },
+                        "example": 50
+                    },
+                    {
+                        "name": "itemId",
+                        "in": "query",
+                        "description": "Filter by specific item internal ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "Filter by item code or display name (contains)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "subsidiary",
+                        "in": "query",
+                        "description": "Filter by subsidiary internal ID (items available to that subsidiary)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "costCenter",
+                        "in": "query",
+                        "description": "Filter by cost center (class) internal ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "division",
+                        "in": "query",
+                        "description": "Filter by division (department) internal ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "location",
+                        "in": "query",
+                        "description": "Limit the locations block (and inStockOnly) to this location internal ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "inStockOnly",
+                        "in": "query",
+                        "description": "Only return items with quantity on hand above zero (at location, if given)",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "default": false
+                        }
+                    },
+                    {
+                        "name": "isInactive",
+                        "in": "query",
+                        "description": "true returns only inactive items, false (default) only active ones",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "default": false
+                        }
+                    },
+                    {
+                        "name": "includeInactive",
+                        "in": "query",
+                        "description": "Return both active and inactive items (overrides isInactive)",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "default": false
+                        }
+                    },
+                    {
+                        "name": "includeLocations",
+                        "in": "query",
+                        "description": "Include per-location stock quantities in the response",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "default": false
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/truefoods-sanifu/get/vendors": {
             "post": {
                 "tags": [
